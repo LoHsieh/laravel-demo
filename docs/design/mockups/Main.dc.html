@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>焙日 Bairi 首頁</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;family=Noto+Sans+TC:wght@400;500&amp;family=Noto+Serif+TC:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F1EA}
+a{color:#8B5A3A}a:hover{color:#26221D}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F1EA; color: #26221D; font-family: 'Noto Sans TC', sans-serif; font-size: 15px; line-height: 1.8">
+
+<div style="background: #26221D; color: #EFE9DF; font-size: 12px; letter-spacing: 0.08em; padding: 8px 16px; text-align: center">這是作品展示用的 demo 網站，資料會在閒置後自動重置　·　綠界測試卡號 4311-9522-2222-2222</div>
+
+<header style="border-bottom: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 48px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 40px">
+<a href="Main.dc.html" style="display: flex; align-items: baseline; gap: 12px; text-decoration: none; color: #26221D">
+<span style="font-family: 'Noto Serif TC', serif; font-size: 26px; font-weight: 600; letter-spacing: 0.14em">焙日</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 0.32em">BAIRI</span>
+</a>
+<nav aria-label="主選單" style="display: flex; flex-wrap: wrap; gap: 8px 36px; font-size: 14px; letter-spacing: 0.1em">
+<a href="#beans" style="text-decoration: none; color: #26221D">咖啡豆</a>
+<a href="#flavors" style="text-decoration: none; color: #26221D">依風味找</a>
+<a href="#about" style="text-decoration: none; color: #26221D">關於焙日</a>
+</nav>
+<div style="display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="搜尋" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: #26221D; cursor: pointer">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+</button>
+<a href="#" aria-label="會員登入" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #26221D">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8.5" r="3.8"></circle><path d="M4.5 20c1.2-3.6 4.1-5.5 7.5-5.5s6.3 1.9 7.5 5.5"></path></svg>
+</a>
+<a href="Cart.dc.html" aria-label="購物車，2 件商品" style="height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 8px; color: #26221D; text-decoration: none; font-size: 13px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 16px">2</span>
+</a>
+</div>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: clamp(48px, 8vw, 112px) clamp(16px, 4vw, 48px); display: flex; flex-wrap: wrap; align-items: center; gap: 64px">
+<div style="flex: 1 1 420px; min-width: 0">
+<p style="margin: 0 0 28px; font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 0.34em; color: {{accent}}">SMALL BATCH ROASTERY</p>
+<h1 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: clamp(36px, 5vw, 60px); line-height: 1.4; letter-spacing: 0.08em">每日，<br>好好烘一支豆子。</h1>
+<p style="margin: 32px 0 0; max-width: 420px; color: #5F574D">焙日只販售單一產區的精品咖啡豆。每週小批次烘焙，下單後才依你的沖煮器具研磨。</p>
+<div style="margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px 36px">
+<a href="#beans" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 36px; background: #26221D; color: #F5F1EA; text-decoration: none; font-size: 14px; letter-spacing: 0.14em">選購咖啡豆</a>
+<a href="#flavors" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; text-decoration: none; font-size: 14px; letter-spacing: 0.14em; border-bottom: 1px solid #26221D">從風味開始找</a>
+</div>
+</div>
+<div style="flex: 1 1 420px; min-width: 0">
+<div style="position: relative; background: #E9E2D6; aspect-ratio: 5 / 6; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 46%; aspect-ratio: 3 / 4; background: #C6B193; border-radius: 3px; box-shadow: 0 40px 70px -36px rgba(38, 34, 29, 0.5)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #B39C7B; border-radius: 3px 3px 0 0"></div>
+<div style="position: absolute; left: 14%; right: 14%; top: 30%; bottom: 20%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center">
+<span style="font-family: 'Noto Serif TC', serif; font-size: 24px; letter-spacing: 0.24em">焙日</span>
+<span style="width: 28px; height: 1px; background: #26221D"></span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: 0.24em">YIRGACHEFFE</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.2em; color: #5F574D">LIGHT ROAST</span>
+</div>
+</div>
+<p aria-hidden="true" style="position: absolute; top: 36px; right: 32px; margin: 0; writing-mode: vertical-rl; font-family: 'Noto Serif TC', serif; font-size: 14px; letter-spacing: 0.5em; color: #5F574D">本週烘焙</p>
+<p style="position: absolute; left: 32px; bottom: 28px; margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.22em; color: #5F574D">ETHIOPIA — YIRGACHEFFE</p>
+</div>
+</div>
+</section>
+
+<section id="flavors" style="border-top: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 96px clamp(16px, 4vw, 48px)">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: 48px">
+<div>
+<p style="margin: 0 0 12px; font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.32em; color: {{accent}}">FIND BY FLAVOR</p>
+<h2 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 32px; letter-spacing: 0.1em">從風味開始找</h2>
+</div>
+<p style="margin: 0; max-width: 360px; color: #5F574D; font-size: 14px">不熟悉產區也沒關係，選一個喜歡的味道，我們幫你找到對的豆子。</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: #DDD5C8; border: 1px solid #DDD5C8">
+<a href="#beans" style="display: flex; flex-direction: column; gap: 14px; padding: 36px 32px 40px; background: #F5F1EA; color: #26221D; text-decoration: none">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #E3D6CF"></span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 22px; letter-spacing: 0.12em">花香</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">FLORAL</span>
+<span style="font-size: 14px; color: #5F574D">茉莉、佛手柑般輕盈的香氣。</span>
+</a>
+<a href="#beans" style="display: flex; flex-direction: column; gap: 14px; padding: 36px 32px 40px; background: #F5F1EA; color: #26221D; text-decoration: none">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #E2C9B4"></span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 22px; letter-spacing: 0.12em">果酸</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">FRUITY</span>
+<span style="font-size: 14px; color: #5F574D">莓果、柑橘般明亮的酸質。</span>
+</a>
+<a href="#beans" style="display: flex; flex-direction: column; gap: 14px; padding: 36px 32px 40px; background: #F5F1EA; color: #26221D; text-decoration: none">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #CDB89C"></span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 22px; letter-spacing: 0.12em">堅果</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">NUTTY</span>
+<span style="font-size: 14px; color: #5F574D">杏仁、烤榛果般溫和圓潤。</span>
+</a>
+<a href="#beans" style="display: flex; flex-direction: column; gap: 14px; padding: 36px 32px 40px; background: #F5F1EA; color: #26221D; text-decoration: none">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #9C8068"></span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 22px; letter-spacing: 0.12em">巧克力</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">CHOCOLATE</span>
+<span style="font-size: 14px; color: #5F574D">可可、黑糖般厚實的甜感。</span>
+</a>
+</div>
+</div>
+</section>
+
+<section id="beans" style="border-top: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 96px clamp(16px, 4vw, 48px)">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: 48px">
+<div>
+<p style="margin: 0 0 12px; font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.32em; color: {{accent}}">THIS WEEK</p>
+<h2 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 32px; letter-spacing: 0.1em">本週烘焙</h2>
+</div>
+<a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; text-decoration: none; font-size: 14px; letter-spacing: 0.12em; border-bottom: 1px solid #26221D">查看全部咖啡豆</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 48px 32px">
+
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #C6B193; border-radius: 2px; box-shadow: 0 24px 40px -24px rgba(38, 34, 29, 0.45)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #B39C7B"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">ETHIOPIA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">耶加雪菲 孔加 水洗</span>
+<span style="font-size: 13px; color: #5F574D">茉莉・檸檬・紅茶</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">淺焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px">NT$260 起</span>
+</div>
+</div>
+</a>
+
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #BBA27F; border-radius: 2px; box-shadow: 0 24px 40px -24px rgba(38, 34, 29, 0.45)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #A68D6A"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">KENYA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">肯亞 涅里 AA 水洗</span>
+<span style="font-size: 13px; color: #5F574D">黑醋栗・葡萄柚・蔗糖</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">淺中焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px">NT$320 起</span>
+</div>
+</div>
+</a>
+
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #A88F6E; border-radius: 2px; box-shadow: 0 24px 40px -24px rgba(38, 34, 29, 0.45)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #937A5A"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">COLOMBIA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">哥倫比亞 慧蘭 水洗</span>
+<span style="font-size: 13px; color: #5F574D">焦糖・蘋果・杏仁</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">中焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px">NT$240 起</span>
+</div>
+</div>
+</a>
+
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="position: relative; background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #8E765B; border-radius: 2px; opacity: 0.55">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #7A644B"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+<span style="position: absolute; top: 16px; left: 16px; padding: 2px 12px; background: #F5F1EA; border: 1px solid #26221D; font-size: 12px; letter-spacing: 0.14em">已售完</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">GUATEMALA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">瓜地馬拉 安提瓜 日曬</span>
+<span style="font-size: 13px; color: #5F574D">可可・黑糖・烤堅果</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">中深焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px; color: #5F574D">NT$240 起</span>
+</div>
+</div>
+</a>
+
+</div>
+</div>
+</section>
+
+<section id="about" style="background: #ECE6DC">
+<div style="max-width: 1200px; margin: 0 auto; padding: 96px clamp(16px, 4vw, 48px); display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 48px 64px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 40px; line-height: 1; color: {{accent}}">01</span>
+<h3 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.12em">小批次烘焙</h3>
+<p style="margin: 0; font-size: 14px; color: #5F574D">每支豆子一次只烘少量，讓你收到的咖啡豆都在最好喝的時候。</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 40px; line-height: 1; color: {{accent}}">02</span>
+<h3 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.12em">下單後才研磨</h3>
+<p style="margin: 0; font-size: 14px; color: #5F574D">選擇你的沖煮器具，我們在出貨前才研磨。研磨不另收費。</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 40px; line-height: 1; color: {{accent}}">03</span>
+<h3 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.12em">滿 NT$1,000 免運</h3>
+<p style="margin: 0; font-size: 14px; color: #5F574D">宅配運費 NT$100，單筆訂單商品金額滿 NT$1,000 即免運費。</p>
+</div>
+</div>
+</section>
+
+<footer style="border-top: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 48px clamp(16px, 4vw, 48px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 40px; font-size: 13px; color: #5F574D">
+<div style="display: flex; align-items: baseline; gap: 10px; color: #26221D">
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 600; letter-spacing: 0.14em">焙日</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.3em">BAIRI</span>
+</div>
+<p style="margin: 0">作品展示用 demo，並非真實營業的商店。</p>
+<a href="https://github.com/LoHsieh/laravel-demo" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; letter-spacing: 0.1em">原始碼 GitHub</a>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8B5A3A","options":["#8B5A3A","#5E6B52","#4A5A6E","#26221D"]},"$preview":{"width":1440,"height":2760}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#8B5A3A' };
+}
+}
+</script>
+</body>
+</html>
