@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>焙日 Bairi 購物車</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&amp;family=Noto+Sans+TC:wght@400;500&amp;family=Noto+Serif+TC:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F1EA}
+a{color:#8B5A3A}a:hover{color:#26221D}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F5F1EA; color: #26221D; font-family: 'Noto Sans TC', sans-serif; font-size: 15px; line-height: 1.8">
+
+<div style="background: #26221D; color: #EFE9DF; font-size: 12px; letter-spacing: 0.08em; padding: 8px 16px; text-align: center">這是作品展示用的 demo 網站，資料會在閒置後自動重置　·　綠界測試卡號 4311-9522-2222-2222</div>
+
+<header style="border-bottom: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 48px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 40px">
+<a href="Main.dc.html" style="display: flex; align-items: baseline; gap: 12px; text-decoration: none; color: #26221D">
+<span style="font-family: 'Noto Serif TC', serif; font-size: 26px; font-weight: 600; letter-spacing: 0.14em">焙日</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 0.32em">BAIRI</span>
+</a>
+<nav aria-label="主選單" style="display: flex; flex-wrap: wrap; gap: 8px 36px; font-size: 14px; letter-spacing: 0.1em">
+<a href="Main.dc.html" style="text-decoration: none; color: #26221D">咖啡豆</a>
+<a href="Main.dc.html" style="text-decoration: none; color: #26221D">依風味找</a>
+<a href="Main.dc.html" style="text-decoration: none; color: #26221D">關於焙日</a>
+</nav>
+<div style="display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="搜尋" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: #26221D; cursor: pointer">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+</button>
+<a href="#" aria-label="會員登入" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #26221D">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8.5" r="3.8"></circle><path d="M4.5 20c1.2-3.6 4.1-5.5 7.5-5.5s6.3 1.9 7.5 5.5"></path></svg>
+</a>
+<a href="Cart.dc.html" aria-label="{{cartLabel}}" aria-current="page" style="height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 8px; color: #26221D; text-decoration: none; font-size: 13px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 16px">{{count}}</span>
+</a>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1200px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 48px) 120px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; margin-bottom: 12px">
+<h1 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 34px; letter-spacing: 0.12em">購物車</h1>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 16px; letter-spacing: 0.2em; color: #6B6257">{{countText}}</span>
+</div>
+<p style="margin: 0 0 48px; font-size: 13px; color: #5F574D">你目前以訪客身分瀏覽。登入後，購物車內容會自動併入你的會員購物車。</p>
+
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+<div style="padding: 96px 24px; border-top: 1px solid #DDD5C8; border-bottom: 1px solid #DDD5C8; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center">
+<svg aria-hidden="true" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#6B6257" stroke-width="0.9"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
+<h2 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 22px; letter-spacing: 0.12em">購物車還是空的</h2>
+<p style="margin: 0; font-size: 14px; color: #5F574D">去看看這週烘了哪些豆子吧。</p>
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 36px; margin-top: 12px; background: #26221D; color: #F5F1EA; text-decoration: none; font-size: 14px; letter-spacing: 0.14em">選購咖啡豆</a>
+</div>
+</sc-if>
+
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 56px">
+
+<div style="flex: 999 1 560px; min-width: 0">
+<div role="status" style="padding: 20px 24px; background: #ECE6DC; margin-bottom: 8px">
+<p style="margin: 0 0 12px; font-size: 14px">{{shippingMsg}}</p>
+<div aria-hidden="true" style="height: 3px; background: #DDD5C8">
+<div style="height: 100%; width: {{progress}}; background: {{accent}}"></div>
+</div>
+</div>
+
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<li style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px 28px; padding: 28px 0; border-bottom: 1px solid #DDD5C8">
+<div aria-hidden="true" style="flex: 0 0 96px; height: 120px; background: #ECE6DC; display: flex; align-items: center; justify-content: center">
+<div style="position: relative; width: 52px; height: 70px; background: {{it.bag}}; border-radius: 2px">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 8px; background: rgba(38, 34, 29, 0.12)"></div>
+<div style="position: absolute; left: 9px; right: 9px; top: 22px; height: 30px; background: #F8F5EF"></div>
+</div>
+</div>
+<div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">{{it.origin}}</span>
+<a href="Product.dc.html" style="font-family: 'Noto Serif TC', serif; font-size: 17px; letter-spacing: 0.06em; color: #26221D; text-decoration: none">{{it.name}}</a>
+<span style="font-size: 13px; color: #5F574D">{{it.detail}}</span>
+<span style="font-size: 13px; color: #5F574D">單價 {{it.priceText}}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 28px">
+<div role="group" aria-label="{{it.qtyLabel}}" style="display: flex; align-items: center; border: 1px solid #C9BFB0">
+<button type="button" aria-label="減少數量" onClick="{{it.dec}}" style="width: 44px; height: 44px; background: none; border: 0; color: #26221D; font-size: 17px; cursor: pointer">−</button>
+<span style="width: 34px; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 19px">{{it.qty}}</span>
+<button type="button" aria-label="增加數量" onClick="{{it.inc}}" style="width: 44px; height: 44px; background: none; border: 0; color: #26221D; font-size: 17px; cursor: pointer">+</button>
+</div>
+<span style="min-width: 88px; text-align: right; font-family: 'Cormorant Garamond', serif; font-size: 20px">{{it.lineText}}</span>
+<button type="button" aria-label="{{it.removeLabel}}" onClick="{{it.remove}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: #6B6257; cursor: pointer">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+<sc-if value="{{it.atLimit}}" hint-placeholder-val="{{false}}">
+<p style="flex: 1 1 100%; margin: 0; font-size: 12px; color: #8B5A3A">此規格目前僅剩 {{it.stock}} 包，已達可購買上限。</p>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 24px; color: #26221D; font-size: 14px; letter-spacing: 0.1em">繼續選購</a>
+</div>
+
+<aside aria-label="訂單摘要" style="flex: 1 1 320px; min-width: 0; padding: 36px 32px; background: #FBF9F5; border: 1px solid #DDD5C8">
+<h2 style="margin: 0 0 24px; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.12em">訂單摘要</h2>
+<dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 14px; font-size: 14px">
+<dt style="color: #5F574D">商品小計</dt>
+<dd style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 18px">{{subtotalText}}</dd>
+<dt style="color: #5F574D">運費（宅配）</dt>
+<dd style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 18px">{{shippingText}}</dd>
+</dl>
+<div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 24px; padding-top: 20px; border-top: 1px solid #DDD5C8">
+<span style="font-size: 15px">總計</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 32px">{{totalText}}</span>
+</div>
+<button type="button" style="width: 100%; min-height: 56px; margin-top: 28px; background: #26221D; color: #F5F1EA; border: 0; font-family: 'Noto Sans TC', sans-serif; font-size: 15px; letter-spacing: 0.16em; cursor: pointer">前往結帳</button>
+<ul style="margin: 24px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #5F574D">
+<li>結帳時需登入會員，可使用信用卡付款。</li>
+<li>訂單成立後保留庫存 30 分鐘，逾時未付款將自動取消。</li>
+<li>研磨不另收費，出貨前才研磨。</li>
+</ul>
+</aside>
+
+</div>
+</sc-if>
+</main>
+
+<footer style="border-top: 1px solid #DDD5C8">
+<div style="max-width: 1200px; margin: 0 auto; padding: 48px clamp(16px, 4vw, 48px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 40px; font-size: 13px; color: #5F574D">
+<div style="display: flex; align-items: baseline; gap: 10px; color: #26221D">
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 600; letter-spacing: 0.14em">焙日</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.3em">BAIRI</span>
+</div>
+<p style="margin: 0">作品展示用 demo，並非真實營業的商店。</p>
+<a href="https://github.com/LoHsieh/laravel-demo" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; letter-spacing: 0.1em">原始碼 GitHub</a>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8B5A3A","options":["#8B5A3A","#5E6B52","#4A5A6E","#26221D"]},"showEmpty":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = {
+items: [
+{ id: 'yirga-100-pour', origin: 'ETHIOPIA', name: '耶加雪菲 孔加 水洗', variant: '100g', grind: '手沖', price: 260, qty: 1, stock: 12, bag: '#C6B193' },
+{ id: 'huila-250-whole', origin: 'COLOMBIA', name: '哥倫比亞 慧蘭 水洗', variant: '250g', grind: '原豆', price: 480, qty: 1, stock: 3, bag: '#A88F6E' }
+]
+};
+}
+setQty(id, delta) {
+this.setState({
+items: this.state.items.map(function (it) {
+if (it.id !== id) return it;
+var q = Math.max(1, Math.min(it.stock, it.qty + delta));
+return Object.assign({}, it, { qty: q });
+})
+});
+}
+renderVals() {
+var self = this;
+var fmt = function (n) { return 'NT$' + n.toLocaleString('en-US'); };
+var THRESHOLD = 1000;
+var FEE = 100;
+var source = this.props.showEmpty ? [] : this.state.items;
+var subtotal = source.reduce(function (sum, it) { return sum + it.price * it.qty; }, 0);
+var count = source.reduce(function (sum, it) { return sum + it.qty; }, 0);
+var free = subtotal >= THRESHOLD;
+var shipping = free ? 0 : FEE;
+var pct = Math.min(100, Math.round(subtotal / THRESHOLD * 100));
+var items = source.map(function (it) {
+return {
+origin: it.origin,
+name: it.name,
+detail: it.variant + '・研磨：' + it.grind,
+priceText: fmt(it.price),
+qty: it.qty,
+stock: it.stock,
+lineText: fmt(it.price * it.qty),
+bag: it.bag,
+atLimit: it.qty >= it.stock,
+qtyLabel: it.name + ' 數量',
+removeLabel: '移除 ' + it.name,
+dec: function () { self.setQty(it.id, -1); },
+inc: function () { self.setQty(it.id, 1); },
+remove: function () { self.setState({ items: self.state.items.filter(function (x) { return x.id !== it.id; }) }); }
+};
+});
+return {
+accent: this.props.accent ?? '#8B5A3A',
+items: items,
+isEmpty: items.length === 0,
+hasItems: items.length > 0,
+count: count,
+countText: count + ' ITEMS',
+cartLabel: '購物車，' + count + ' 件商品',
+subtotalText: fmt(subtotal),
+shippingText: free ? '免運' : fmt(FEE),
+totalText: fmt(subtotal + shipping),
+shippingMsg: free ? '已達免運門檻，本筆訂單免運費。' : '再買 ' + fmt(THRESHOLD - subtotal) + ' 即可享免運。',
+progress: pct + '%'
+};
+}
+}
+</script>
+</body>
+</html>
