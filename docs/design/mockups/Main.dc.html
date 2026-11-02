@@ -12,6 +12,12 @@
 <style>
 body{margin:0;background:#F5F1EA}
 a{color:#8B5A3A}a:hover{color:#26221D}
+.rail{scrollbar-width:none;-ms-overflow-style:none}
+.rail::-webkit-scrollbar{display:none}
+.rail > a{flex:0 0 calc((100% - 96px) / 4);scroll-snap-align:start}
+@media (max-width: 960px){.rail > a{flex-basis:calc((100% - 32px) / 2)}}
+@media (max-width: 560px){.rail > a{flex-basis:78%}}
+.rail-btn:hover{background:#26221D;color:#F5F1EA;border-color:#26221D}
 </style>
 </helmet>
 <div style="min-height: 100vh; background: #F5F1EA; color: #26221D; font-family: 'Noto Sans TC', sans-serif; font-size: 15px; line-height: 1.8">
@@ -116,9 +122,15 @@ a{color:#8B5A3A}a:hover{color:#26221D}
 <p style="margin: 0 0 12px; font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.32em; color: {{accent}}">THIS WEEK</p>
 <h2 style="margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 32px; letter-spacing: 0.1em">本週烘焙</h2>
 </div>
-<a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; text-decoration: none; font-size: 14px; letter-spacing: 0.12em; border-bottom: 1px solid #26221D">查看全部咖啡豆</a>
+<div style="display: flex; align-items: center; gap: 28px">
+<a href="List.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #26221D; text-decoration: none; font-size: 14px; letter-spacing: 0.12em; border-bottom: 1px solid #26221D">查看全部咖啡豆</a>
+<div style="display: flex; gap: 8px">
+<button type="button" class="rail-btn" aria-label="上一支咖啡豆" onClick="{{prev}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #C9BFB0; border-radius: 50%; color: #26221D; cursor: pointer"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<button type="button" class="rail-btn" aria-label="下一支咖啡豆" onClick="{{next}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #C9BFB0; border-radius: 50%; color: #26221D; cursor: pointer"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"></path></svg></button>
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 48px 32px">
+</div>
+</div>
+<div class="rail" ref="{{setRail}}" style="display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory">
 
 <a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
 <div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
@@ -193,6 +205,42 @@ a{color:#8B5A3A}a:hover{color:#26221D}
 </div>
 </a>
 
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #CBB89B; border-radius: 2px; box-shadow: 0 24px 40px -24px rgba(38, 34, 29, 0.45)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #B8A280"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">PANAMA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">巴拿馬 波奎特 日曬</span>
+<span style="font-size: 13px; color: #5F574D">草莓・蜂蜜・可可</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">淺中焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px">NT$380 起</span>
+</div>
+</div>
+</a>
+
+<a href="Product.dc.html" style="display: flex; flex-direction: column; gap: 20px; color: #26221D; text-decoration: none">
+<div style="background: #ECE6DC; aspect-ratio: 4 / 5; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" style="position: relative; width: 50%; aspect-ratio: 3 / 4; background: #D0BE9F; border-radius: 2px; box-shadow: 0 24px 40px -24px rgba(38, 34, 29, 0.45)">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 12%; background: #BDA987"></div>
+<div style="position: absolute; left: 16%; right: 16%; top: 32%; bottom: 22%; background: #F8F5EF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><span style="font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: 0.2em">焙日</span><span style="width: 16px; height: 1px; background: #26221D"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.26em; color: #6B6257">ETHIOPIA</span>
+<span style="font-family: 'Noto Serif TC', serif; font-size: 18px; letter-spacing: 0.06em; line-height: 1.5">衣索比亞 古吉 日曬</span>
+<span style="font-size: 13px; color: #5F574D">藍莓・玫瑰・紅酒</span>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 12px; border-top: 1px solid #DDD5C8; font-size: 13px">
+<span style="color: #5F574D">淺焙</span>
+<span style="font-family: 'Cormorant Garamond', serif; font-size: 17px">NT$300 起</span>
+</div>
+</div>
+</a>
+
 </div>
 </div>
 </section>
@@ -233,7 +281,18 @@ a{color:#8B5A3A}a:hover{color:#26221D}
 <script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8B5A3A","options":["#8B5A3A","#5E6B52","#4A5A6E","#26221D"]},"$preview":{"width":1440,"height":2760}}'>
 class Component extends DCLogic {
 renderVals() {
-return { accent: this.props.accent ?? '#8B5A3A' };
+var self = this;
+var scroll = function (dir) {
+var el = self.rail;
+if (!el || !el.firstElementChild) return;
+el.scrollBy({ left: dir * (el.firstElementChild.offsetWidth + 32), behavior: 'smooth' });
+};
+return {
+accent: this.props.accent ?? '#8B5A3A',
+setRail: function (el) { self.rail = el; },
+prev: function () { scroll(-1); },
+next: function () { scroll(1); }
+};
 }
 }
 </script>
