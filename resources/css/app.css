@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* 色彩與字體的定義來源是 docs/design/README.md */
+@theme {
+    --color-paper: #f5f1ea;
+    --color-ink: #26221d;
+    --color-subtle: #5f574d;
+    --color-muted: #6b6257;
+    --color-line: #ddd5c8;
+    --color-outline: #c9bfb0;
+
+    --font-sans: 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Noto Serif TC', ui-serif, serif;
+    --font-latin: 'Cormorant Garamond', ui-serif, serif;
+}
