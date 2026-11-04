@@ -4,9 +4,9 @@
 
 @section('content')
     <div class="mx-auto max-w-[1200px] px-[clamp(16px,4vw,48px)] pt-8 pb-24 max-sm:px-0 max-sm:pt-0 max-sm:pb-36">
-        <nav aria-label="導覽路徑" class="mb-10 flex flex-wrap gap-2 text-[13px] text-muted max-sm:hidden">
-            <a href="{{ route('home') }}" class="text-muted no-underline">首頁</a><span aria-hidden="true">/</span>
-            <a href="{{ route('products.index') }}" class="text-muted no-underline">咖啡豆</a><span aria-hidden="true">/</span>
+        <nav aria-label="導覽路徑" class="mb-8 flex flex-wrap items-center gap-x-2 text-[13px] text-muted max-sm:hidden">
+            <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center text-muted no-underline">首頁</a><span aria-hidden="true">/</span>
+            <a href="{{ route('products.index') }}" class="inline-flex min-h-11 items-center text-muted no-underline">咖啡豆</a><span aria-hidden="true">/</span>
             <span class="text-ink">{{ $product->name }}</span>
         </nav>
 
@@ -28,11 +28,12 @@
                     <h1 class="font-serif text-[clamp(26px,3.4vw,38px)] leading-[1.45] font-medium tracking-[0.08em]">{{ $product->name }}</h1>
                     <p class="text-subtle max-sm:text-sm">{{ $product->flavor_description }}</p>
                     @if ($product->flavorNotes->isNotEmpty())
-                        <ul aria-label="風味標籤" class="flex flex-wrap gap-2">
+                        <ul aria-label="風味標籤" class="-my-2.5 flex flex-wrap gap-x-2">
                             @foreach ($product->flavorNotes as $flavorNote)
                                 <li>
-                                    <a href="{{ route('products.index', ['flavor' => [$flavorNote->name]]) }}"
-                                       class="inline-flex rounded-full border border-outline px-3.5 py-0.5 text-[13px] text-subtle no-underline max-sm:text-xs">{{ $flavorNote->name }}</a>
+                                    <a href="{{ route('products.index', ['flavor' => [$flavorNote->name]]) }}" class="inline-flex min-h-11 items-center no-underline">
+                                        <span class="rounded-full border border-outline px-3.5 py-0.5 text-[13px] text-subtle max-sm:text-xs">{{ $flavorNote->name }}</span>
+                                    </a>
                                 </li>
                             @endforeach
                         </ul>
@@ -90,16 +91,16 @@
                 </div>
                 <ul id="related-list" class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-8 gap-y-12 max-sm:grid-cols-2 max-sm:gap-x-4 max-sm:gap-y-8">
                     @foreach ($related as $relatedProduct)
-                        <li @if ($loop->index >= 4) hidden data-related-extra @endif><x-product-card :product="$relatedProduct" /></li>
+                        <li @if ($loop->index >= $relatedVisible) hidden data-related-extra @endif><x-product-card :product="$relatedProduct" /></li>
                     @endforeach
                 </ul>
-                @if ($related->count() > 4)
+                @if ($related->count() > $relatedVisible)
                     <div class="mt-14 flex items-center gap-6 max-sm:mt-10 max-sm:gap-4">
                         <span aria-hidden="true" class="h-px flex-1 bg-line"></span>
                         <button type="button" aria-expanded="false" aria-controls="related-list" data-related-toggle
-                                data-label-collapsed="查看更多（{{ $related->count() - 4 }} 支）" data-label-expanded="收合"
+                                data-label-collapsed="查看更多（{{ $related->count() - $relatedVisible }} 支）" data-label-expanded="收合"
                                 class="group inline-flex min-h-12 cursor-pointer items-center gap-2.5 border border-ink bg-transparent px-7 text-sm tracking-[0.12em] text-ink">
-                            <span data-related-toggle-label>查看更多（{{ $related->count() - 4 }} 支）</span>
+                            <span data-related-toggle-label>查看更多（{{ $related->count() - $relatedVisible }} 支）</span>
                             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="group-aria-expanded:rotate-180"><path d="M5 9l7 7 7-7"></path></svg>
                         </button>
                         <span aria-hidden="true" class="h-px flex-1 bg-line"></span>

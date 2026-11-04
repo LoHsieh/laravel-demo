@@ -14,8 +14,8 @@ const selectedVariantId = ref(props.variants.find((variant) => !variant.sold_out
 const selectedGrind = ref(props.grinds[0]?.value ?? null);
 const quantity = ref(1);
 
-const variant = computed(() => props.variants.find((v) => v.id === selectedVariantId.value) ?? null);
-const grind = computed(() => props.grinds.find((g) => g.value === selectedGrind.value) ?? null);
+const variant = computed(() => props.variants.find((option) => option.id === selectedVariantId.value) ?? null);
+const grind = computed(() => props.grinds.find((option) => option.value === selectedGrind.value) ?? null);
 const lowStock = computed(() => variant.value !== null && variant.value.stock <= LOW_STOCK);
 
 const formatPrice = (price) => `NT$${price.toLocaleString('en-US')}`;
@@ -27,11 +27,11 @@ const stockText = computed(() => {
     return lowStock.value ? `僅剩 ${variant.value.stock} 包` : '現貨供應';
 });
 
-const selectVariant = (v) => {
-    if (v.sold_out) return;
+const selectVariant = (option) => {
+    if (option.sold_out) return;
 
-    selectedVariantId.value = v.id;
-    quantity.value = Math.min(quantity.value, v.stock);
+    selectedVariantId.value = option.id;
+    quantity.value = Math.min(quantity.value, option.stock);
 };
 
 const changeQuantity = (delta) => {
@@ -43,9 +43,9 @@ const changeQuantity = (delta) => {
 const summary = computed(() => {
     if (variant.value === null) return stockText.value;
 
-    const parts = `${variant.value.label}・${grind.value?.label ?? ''} × ${quantity.value}`;
+    const selection = `${variant.value.label}・${grind.value?.label ?? ''} × ${quantity.value}`;
 
-    return lowStock.value ? `${parts}・${stockText.value}` : parts;
+    return lowStock.value ? `${selection}・${stockText.value}` : selection;
 });
 </script>
 
@@ -69,7 +69,7 @@ const summary = computed(() => {
                     :aria-pressed="v.sold_out ? undefined : String(v.id === selectedVariantId)"
                     class="flex min-h-16 flex-col items-center justify-center border max-sm:min-h-[58px]"
                     :class="v.sold_out
-                        ? 'cursor-not-allowed border-dashed border-outline bg-[#EDE8E0] text-muted'
+                        ? 'cursor-not-allowed border-dashed border-outline bg-sand text-muted'
                         : v.id === selectedVariantId
                             ? 'cursor-pointer border-ink bg-ink text-paper'
                             : 'cursor-pointer border-outline bg-transparent text-ink'"

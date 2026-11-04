@@ -24,6 +24,11 @@ class ProductController extends Controller
     private const MAX_RELATED = 8;
 
     /**
+     * 「你可能也喜歡」收合時顯示的數量，超過時出現「查看更多」。
+     */
+    private const RELATED_VISIBLE = 4;
+
+    /**
      * 列表頁。Vue 元件以同一個網址取得 JSON 結果，篩選、排序、換頁時不整頁重新載入。
      */
     public function index(Request $request): Response|JsonResponse
@@ -66,6 +71,7 @@ class ProductController extends Controller
                 ->withCardSummary()
                 ->limit(self::MAX_RELATED)
                 ->get(),
+            'relatedVisible' => self::RELATED_VISIBLE,
             'purchase' => [
                 'variants' => $product->variants->map(fn (Variant $variant) => [
                     'id' => $variant->id,
