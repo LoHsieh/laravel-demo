@@ -1,6 +1,7 @@
 <script setup>
 // 詳情頁購買區：01 規格 → 02 研磨方式 → 數量。研磨方式不影響價格與庫存（ADR 0001）。
 import { computed, ref } from 'vue';
+import { formatPrice } from '../format.js';
 
 const props = defineProps({
     variants: { type: Array, required: true },
@@ -17,8 +18,6 @@ const quantity = ref(1);
 const variant = computed(() => props.variants.find((option) => option.id === selectedVariantId.value) ?? null);
 const grind = computed(() => props.grinds.find((option) => option.value === selectedGrind.value) ?? null);
 const lowStock = computed(() => variant.value !== null && variant.value.stock <= LOW_STOCK);
-
-const formatPrice = (price) => `NT$${price.toLocaleString('en-US')}`;
 
 const stockText = computed(() => {
     if (props.variants.length === 0) return '尚未開賣';

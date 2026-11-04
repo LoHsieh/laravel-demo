@@ -8,8 +8,8 @@ use App\Catalog\ProductFilters;
 use App\Catalog\ProductSort;
 use App\Catalog\Roast;
 use App\Http\Resources\ProductCardResource;
+use App\Http\Resources\VariantResource;
 use App\Models\Product;
-use App\Models\Variant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -57,7 +57,7 @@ class ProductController extends Controller
     /**
      * 咖啡豆詳情頁。規格與研磨方式選擇器是 Vue 元件，初始資料由這裡交給它。
      */
-    public function show(Product $product): Response
+    public function show(Request $request, Product $product): Response
     {
         abort_unless($product->is_published, 404);
 
@@ -73,13 +73,7 @@ class ProductController extends Controller
                 ->get(),
             'relatedVisible' => self::RELATED_VISIBLE,
             'purchase' => [
-                'variants' => $product->variants->map(fn (Variant $variant) => [
-                    'id' => $variant->id,
-                    'label' => "{$variant->weight_grams}g",
-                    'price' => $variant->price,
-                    'stock' => $variant->stock,
-                    'sold_out' => $variant->stock === 0,
-                ])->all(),
+                'variants' => VariantResource::collection($product->variants)->resolve($request),
                 'grinds' => array_map(
                     fn (Grind $grind) => ['value' => $grind->value, 'label' => $grind->label(), 'hint' => $grind->hint()],
                     Grind::cases(),
