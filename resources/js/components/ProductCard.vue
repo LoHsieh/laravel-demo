@@ -1,14 +1,14 @@
 <script setup>
 // 咖啡豆卡片。版面與 resources/views/components/product-card.blade.php 相同，修改時兩邊一起改。
+import { formatPrice } from '../format.js';
+
 defineProps({
     product: { type: Object, required: true },
 });
-
-const formatPrice = (price) => `NT$${price.toLocaleString('en-US')} 起`;
 </script>
 
 <template>
-    <article class="flex flex-col gap-5 max-sm:gap-2.5">
+    <a :href="product.url" class="flex flex-col gap-5 text-ink no-underline max-sm:gap-2.5">
         <div class="relative flex aspect-[4/5] items-center justify-center bg-sand">
             <div
                 aria-hidden="true"
@@ -37,8 +37,8 @@ const formatPrice = (price) => `NT$${price.toLocaleString('en-US')} 起`;
                     v-if="product.min_price !== null"
                     class="font-latin text-[17px] max-sm:text-base"
                     :class="{ 'text-subtle': product.sold_out }"
-                >{{ formatPrice(product.min_price) }}</span>
+                >{{ formatPrice(product.min_price) }} 起</span>
             </div>
         </div>
-    </article>
+    </a>
 </template>

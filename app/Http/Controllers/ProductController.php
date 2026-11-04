@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Catalog\Grind;
 use App\Catalog\ProductFacets;
 use App\Catalog\ProductFilters;
 use App\Catalog\ProductSort;
+use App\Catalog\Roast;
 use App\Http\Resources\ProductCardResource;
+use App\Http\Resources\VariantResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,6 +17,16 @@ use Illuminate\Http\Response;
 class ProductController extends Controller
 {
     private const PER_PAGE = 12;
+
+    /**
+     * 詳情頁「你可能也喜歡」最多列出的咖啡豆數量。
+     */
+    private const MAX_RELATED = 8;
+
+    /**
+     * 「你可能也喜歡」收合時顯示的數量，超過時出現「查看更多」。
+     */
+    private const RELATED_VISIBLE = 4;
 
     /**
      * 列表頁。Vue 元件以同一個網址取得 JSON 結果，篩選、排序、換頁時不整頁重新載入。
@@ -39,6 +52,34 @@ class ProductController extends Controller
                 ),
             ],
         ])->setVary('Accept');
+    }
+
+    /**
+     * 咖啡豆詳情頁。規格與研磨方式選擇器是 Vue 元件，初始資料由這裡交給它。
+     */
+    public function show(Request $request, Product $product): Response
+    {
+        abort_unless($product->is_published, 404);
+
+        $product->load(['variants', 'flavorNotes']);
+
+        return response()->view('products.show', [
+            'product' => $product,
+            'roast' => Roast::tryFrom($product->roast),
+            'related' => Product::published()
+                ->relatedTo($product)
+                ->withCardSummary()
+                ->limit(self::MAX_RELATED)
+                ->get(),
+            'relatedVisible' => self::RELATED_VISIBLE,
+            'purchase' => [
+                'variants' => VariantResource::collection($product->variants)->resolve($request),
+                'grinds' => array_map(
+                    fn (Grind $grind) => ['value' => $grind->value, 'label' => $grind->label(), 'hint' => $grind->hint()],
+                    Grind::cases(),
+                ),
+            ],
+        ]);
     }
 
     /**

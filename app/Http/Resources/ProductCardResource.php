@@ -29,6 +29,7 @@ class ProductCardResource extends JsonResource
             'min_price' => $this->variants_min_price === null ? null : (int) $this->variants_min_price,
             'sold_out' => ! $this->has_stock,
             'bag_color' => $this->bag_color,
+            'url' => route('products.show', $this->resource),
         ];
     }
 }

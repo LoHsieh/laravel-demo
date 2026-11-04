@@ -105,6 +105,25 @@ class Product extends Model
     }
 
     /**
+     * 與指定咖啡豆有共同風味標籤的其他咖啡豆，共同標籤越多越前面，同數量時較新的排前面。
+     *
+     * @param  Builder<Product>  $query
+     */
+    #[Scope]
+    protected function relatedTo(Builder $query, Product $product): void
+    {
+        $sharesFlavorNote = fn (Builder $query) => $query->whereKey($product->flavorNotes->modelKeys());
+
+        $query
+            ->whereKeyNot($product->getKey())
+            ->whereHas('flavorNotes', $sharesFlavorNote)
+            ->withCount(['flavorNotes as shared_flavor_notes_count' => $sharesFlavorNote])
+            ->orderByDesc('shared_flavor_notes_count')
+            ->latest()
+            ->orderByDesc('id');
+    }
+
+    /**
      * 價格排序以最便宜的規格為準，尚無規格（沒有價格）的排在最後，價格相同時較新的排前面。
      *
      * @param  Builder<Product>  $query

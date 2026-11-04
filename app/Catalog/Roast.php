@@ -13,6 +13,14 @@ enum Roast: string
     case MediumDark = '中深焙';
     case Dark = '深焙';
 
+    /**
+     * 由淺到深的級數，1 到 5。
+     */
+    public function level(): int
+    {
+        return array_search($this, self::cases(), true) + 1;
+    }
+
     public function latin(): string
     {
         return match ($this) {
