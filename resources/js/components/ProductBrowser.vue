@@ -255,13 +255,17 @@ onBeforeUnmount(() => {
 
                 <label class="flex items-center gap-2.5 text-sm text-muted max-sm:block">
                     <span class="max-sm:sr-only">排序</span>
-                    <select
-                        :value="filters.sort"
-                        class="min-h-12 border border-outline bg-raised px-3 text-sm text-ink max-sm:w-full max-sm:bg-transparent"
-                        @change="changeSort"
-                    >
-                        <option v-for="option in sortOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-                    </select>
+                    <!-- 自繪箭頭：箭頭到右框的距離與文字到左框相同（皆 12px）。 -->
+                    <span class="relative inline-flex max-sm:flex">
+                        <select
+                            :value="filters.sort"
+                            class="min-h-12 appearance-none border border-outline bg-raised pr-9 pl-3 text-sm text-ink max-sm:w-full max-sm:bg-transparent"
+                            @change="changeSort"
+                        >
+                            <option v-for="option in sortOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+                        </select>
+                        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink"><path d="M5 9l7 7 7-7" /></svg>
+                    </span>
                 </label>
             </div>
 
