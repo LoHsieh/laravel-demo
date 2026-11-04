@@ -9,8 +9,13 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
+        // 正式環境每次啟動都會執行種子，因此以名稱與重量比對，避免重複建立。
         foreach ($this->products() as [$attributes, $variants]) {
-            Product::create($attributes)->variants()->createMany($variants);
+            $product = Product::firstOrCreate(['name' => $attributes['name']], $attributes);
+
+            foreach ($variants as $variant) {
+                $product->variants()->firstOrCreate(['weight_grams' => $variant['weight_grams']], $variant);
+            }
         }
     }
 

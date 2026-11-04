@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use App\Models\Variant;
 use Database\Seeders\DatabaseSeeder;
 
 it('shows a 訪客 the 咖啡豆 stored in the database with their 規格', function () {
@@ -50,6 +51,14 @@ it('lists the seeded 咖啡豆 and their 規格', function () {
         ->assertSeeText('哥倫比亞 慧蘭 水洗')
         ->assertSeeText('瓜地馬拉 安提瓜 日曬')
         ->assertSeeTextInOrder(['100g', 'NT$260', '250g', 'NT$580', '500g', 'NT$1,080']);
+});
+
+it('does not duplicate 咖啡豆 or 規格 when the seeder runs again on the next deploy', function () {
+    $this->seed(DatabaseSeeder::class);
+    $this->seed(DatabaseSeeder::class);
+
+    expect(Product::count())->toBe(4)
+        ->and(Variant::count())->toBe(10);
 });
 
 it('embeds the Vite-bundled Vue component with the 規格 as its props', function () {
