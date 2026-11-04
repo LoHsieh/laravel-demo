@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ProductController::class, 'index'])->name('products.index');
+Route::get('/', HomeController::class)->name('home');
+Route::get('/beans', [ProductController::class, 'index'])->name('products.index');

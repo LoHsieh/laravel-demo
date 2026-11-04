@@ -6,6 +6,11 @@
 /* 色彩與字體的定義來源是 docs/design/README.md */
 @theme {
     --color-paper: #f5f1ea;
+    --color-sand: #ece6dc;
+    --color-sand-deep: #e9e2d6;
+    --color-raised: #fbf9f5;
+    --color-label: #f8f5ef;
+    --color-accent: #8b5a3a;
     --color-ink: #26221d;
     --color-subtle: #5f574d;
     --color-muted: #6b6257;
@@ -15,4 +20,50 @@
     --font-sans: 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
     --font-serif: 'Noto Serif TC', ui-serif, serif;
     --font-latin: 'Cormorant Garamond', ui-serif, serif;
+}
+
+/* 首頁「本週烘焙」橫向卡片列：隱藏捲軸、scroll-snap，手機右側露出半張卡片 */
+@layer components {
+    .rail {
+        display: flex;
+        gap: 32px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        & > li {
+            flex: 0 0 calc((100% - 96px) / 4);
+            scroll-snap-align: start;
+
+            @media (max-width: 960px) {
+                flex-basis: calc((100% - 32px) / 2);
+            }
+
+            @media (max-width: 560px) {
+                flex-basis: 78%;
+            }
+        }
+    }
+
+    .rail-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid var(--color-outline);
+        border-radius: 999px;
+        color: var(--color-ink);
+        cursor: pointer;
+
+        &:hover {
+            background: var(--color-ink);
+            border-color: var(--color-ink);
+            color: var(--color-paper);
+        }
+    }
 }
