@@ -3,7 +3,7 @@
 
 @php($soldOut = ! $product->has_stock)
 
-<article {{ $attributes->class('flex flex-col gap-5 max-sm:gap-2.5') }}>
+<a href="{{ route('products.show', $product) }}" {{ $attributes->class('flex flex-col gap-5 text-ink no-underline max-sm:gap-2.5') }}>
     <div class="relative flex aspect-[4/5] items-center justify-center bg-sand">
         <x-coffee-bag :color="$product->bag_color" @class(['w-1/2', 'opacity-55' => $soldOut]) />
         @if ($soldOut)
@@ -21,4 +21,4 @@
             @endif
         </div>
     </div>
-</article>
+</a>

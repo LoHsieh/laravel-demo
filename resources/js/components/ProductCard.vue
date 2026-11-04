@@ -8,7 +8,7 @@ const formatPrice = (price) => `NT$${price.toLocaleString('en-US')} 起`;
 </script>
 
 <template>
-    <article class="flex flex-col gap-5 max-sm:gap-2.5">
+    <a :href="product.url" class="flex flex-col gap-5 text-ink no-underline max-sm:gap-2.5">
         <div class="relative flex aspect-[4/5] items-center justify-center bg-sand">
             <div
                 aria-hidden="true"
@@ -40,5 +40,5 @@ const formatPrice = (price) => `NT$${price.toLocaleString('en-US')} 起`;
                 >{{ formatPrice(product.min_price) }}</span>
             </div>
         </div>
-    </article>
+    </a>
 </template>
