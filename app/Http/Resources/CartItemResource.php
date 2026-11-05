@@ -27,7 +27,7 @@ class CartItemResource extends JsonResource
             'origin_latin' => $product->origin_latin,
             'bag_color' => $product->bag_color,
             'url' => route('products.show', $product),
-            'variant_label' => "{$item->variant->weight_grams}g",
+            'variant_label' => $item->variant->label,
             'grind_label' => $item->grind->label(),
             'price' => $item->variant->price,
             'quantity' => $item->quantity,

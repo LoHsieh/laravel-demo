@@ -29,8 +29,8 @@ class CartController extends Controller
         return response()->view('cart.show', [
             'cart' => $summary,
             'urls' => [
-                'items' => route('cart.items.store'),
-                'browse' => route('products.index'),
+                'cartItems' => route('cart.items.store'),
+                'products' => route('products.index'),
             ],
         ])->setVary('Accept');
     }
@@ -43,7 +43,7 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1'],
         ]);
 
-        $variant = Variant::whereRelation('product', 'is_published', true)->findOrFail($validated['variant_id']);
+        $variant = Variant::purchasable()->findOrFail($validated['variant_id']);
 
         $cart->add($variant, Grind::from($validated['grind']), $validated['quantity']);
 

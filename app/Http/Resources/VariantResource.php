@@ -20,7 +20,7 @@ class VariantResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'label' => "{$this->weight_grams}g",
+            'label' => $this->label,
             'price' => $this->price,
             'stock' => $this->stock,
             'sold_out' => $this->stock === 0,

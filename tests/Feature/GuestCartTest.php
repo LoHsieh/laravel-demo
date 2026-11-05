@@ -170,3 +170,32 @@ it('renders the 購物車 page with its 購物車項目 for the cart component',
     expect($props['cart']['items'][0]['name'])->toBe('哥倫比亞 慧蘭 水洗')
         ->and($props['cart']['total'])->toBe(360);
 });
+
+it('lets a 訪客 lower the quantity of a 購物車項目 after the stock of the 規格 has dropped below it', function () {
+    $variant = Variant::factory()->create(['stock' => 5]);
+    $this->postJson('/cart/items', ['variant_id' => $variant->id, 'grind' => 'pour_over', 'quantity' => 5]);
+    $key = $this->getJson('/cart')->json('items.0.key');
+    $variant->update(['stock' => 2]);
+
+    $this->patchJson("/cart/items/{$key}", ['quantity' => 4])
+        ->assertOk()
+        ->assertJsonPath('items.0.quantity', 4);
+});
+
+it('leaves out 規格 of 咖啡豆 that were unpublished or removed after being added', function () {
+    $kept = Variant::factory()->create();
+    $unpublished = Variant::factory()->create();
+    $removed = Variant::factory()->create();
+
+    foreach ([$kept, $unpublished, $removed] as $variant) {
+        $this->postJson('/cart/items', ['variant_id' => $variant->id, 'grind' => 'pour_over', 'quantity' => 1]);
+    }
+
+    $unpublished->product->update(['is_published' => false]);
+    $removed->delete();
+
+    $this->getJson('/cart')
+        ->assertJsonCount(1, 'items')
+        ->assertJsonPath('count', 1);
+    $this->get('/beans')->assertSee('aria-label="購物車，1 件商品"', escape: false);
+});

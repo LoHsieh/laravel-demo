@@ -44,13 +44,14 @@ final class Cart
 
     /**
      * 把購物車項目的數量改成指定值。購物車中沒有這個項目時回傳 false。
+     * 庫存在加入後減少時，仍可把數量往下調，只是不能再調高。
      *
      * @throws ValidationException
      */
     public function changeQuantity(string $key, int $quantity): bool
     {
         $entries = $this->entries();
-        $variant = isset($entries[$key]) ? Variant::find($entries[$key]['variant_id']) : null;
+        $variant = isset($entries[$key]) ? Variant::purchasable()->find($entries[$key]['variant_id']) : null;
 
         if ($variant === null) {
             return false;
@@ -58,7 +59,9 @@ final class Cart
 
         $inOtherItems = $this->quantityOf($variant, $entries) - $entries[$key]['quantity'];
 
-        if ($inOtherItems + $quantity > $variant->stock) {
+        $lowering = $quantity < $entries[$key]['quantity'];
+
+        if (! $lowering && $inOtherItems + $quantity > $variant->stock) {
             throw StockLimitExceeded::whenChanging($variant, $inOtherItems);
         }
 
@@ -86,14 +89,14 @@ final class Cart
     }
 
     /**
-     * 購物車項目，依加入順序排列。規格已不存在的項目略過。
+     * 購物車項目，依加入順序排列。規格已不存在或咖啡豆已下架的項目略過。
      *
      * @return Collection<int, CartItem>
      */
     public function items(): Collection
     {
         $entries = $this->entries();
-        $variants = Variant::with('product')->findMany(array_column($entries, 'variant_id'))->keyBy('id');
+        $variants = Variant::purchasable()->with('product')->findMany(array_column($entries, 'variant_id'))->keyBy('id');
 
         return collect($entries)
             ->filter(fn (array $entry) => $variants->has($entry['variant_id']))
@@ -112,11 +115,11 @@ final class Cart
     }
 
     /**
-     * 頁首顯示的商品數量：所有購物車項目的數量總和。
+     * 頁首顯示的商品數量：所有購物車項目的數量總和，與購物車頁列出的項目一致。
      */
     public function count(): int
     {
-        return array_sum(array_column($this->entries(), 'quantity'));
+        return $this->items()->sum('quantity');
     }
 
     /**

@@ -37,7 +37,7 @@ const update = async (item, request) => {
     }
 };
 
-const itemUrl = (item) => `${props.urls.items}/${encodeURIComponent(item.key)}`;
+const itemUrl = (item) => `${props.urls.cartItems}/${encodeURIComponent(item.key)}`;
 
 const changeQuantity = (item, delta) => update(item, () => cartRequest('PATCH', itemUrl(item), { quantity: item.quantity + delta }));
 const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item)));
@@ -90,9 +90,9 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
 
                         <div class="mt-auto flex items-center justify-between pt-2 sm:hidden">
                             <div role="group" :aria-label="`${item.name} 數量`" class="flex items-center border border-outline">
-                                <button type="button" aria-label="減少數量" :disabled="busy[item.key] || item.quantity <= 1" class="h-10 w-11 cursor-pointer text-base text-ink disabled:cursor-not-allowed disabled:text-muted" @click="changeQuantity(item, -1)">−</button>
+                                <button type="button" aria-label="減少數量" :disabled="busy[item.key] || item.quantity <= 1" class="size-11 cursor-pointer text-base text-ink disabled:cursor-not-allowed disabled:text-muted" @click="changeQuantity(item, -1)">−</button>
                                 <span aria-live="polite" class="w-7 text-center font-latin text-lg">{{ item.quantity }}</span>
-                                <button type="button" aria-label="增加數量" :disabled="busy[item.key] || item.quantity >= item.stock" class="h-10 w-11 cursor-pointer text-base text-ink disabled:cursor-not-allowed disabled:text-muted" @click="changeQuantity(item, 1)">+</button>
+                                <button type="button" aria-label="增加數量" :disabled="busy[item.key] || item.quantity >= item.stock" class="size-11 cursor-pointer text-base text-ink disabled:cursor-not-allowed disabled:text-muted" @click="changeQuantity(item, 1)">+</button>
                             </div>
                             <span class="font-latin text-[19px]">{{ formatPrice(item.line_total) }}</span>
                         </div>
@@ -122,7 +122,7 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
                 </li>
             </ul>
 
-            <a :href="urls.browse" class="mt-6 inline-flex min-h-11 items-center text-sm tracking-[0.1em] text-ink max-sm:hidden">繼續選購</a>
+            <a :href="urls.products" class="mt-6 inline-flex min-h-11 items-center text-sm tracking-[0.1em] text-ink max-sm:hidden">繼續選購</a>
         </div>
 
         <aside aria-label="訂單摘要" class="min-w-0 flex-[1_1_320px] border border-line bg-raised px-8 py-9 max-sm:mt-5 max-sm:border-0 max-sm:bg-transparent max-sm:p-0">

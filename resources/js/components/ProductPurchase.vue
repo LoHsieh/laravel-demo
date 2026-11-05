@@ -189,7 +189,7 @@ const summary = computed(() => {
         <div aria-live="polite" class="absolute inset-x-3 bottom-full mb-3 empty:hidden">
             <div v-if="added" class="flex items-center justify-between gap-2 bg-ink py-1.5 pr-2 pl-4 text-[13px] text-paper">
                 <span>已加入購物車</span>
-                <a :href="urls.cart" class="inline-flex min-h-11 items-center px-2 tracking-[0.08em] text-paper">查看</a>
+                <a :href="urls.cart" class="inline-flex min-h-11 min-w-11 items-center justify-center px-2 tracking-[0.08em] text-paper">查看</a>
             </div>
             <p v-else-if="error" class="bg-ink px-4 py-2.5 text-[13px] text-paper">{{ error }}</p>
         </div>
