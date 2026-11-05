@@ -1,11 +1,13 @@
 <script setup>
 // 詳情頁購買區：01 規格 → 02 研磨方式 → 數量。研磨方式不影響價格與庫存（ADR 0001）。
 import { computed, ref } from 'vue';
+import { cartRequest } from '../cart.js';
 import { formatPrice } from '../format.js';
 
 const props = defineProps({
     variants: { type: Array, required: true },
     grinds: { type: Array, required: true },
+    urls: { type: Object, required: true },
 });
 
 // 剩餘數量不多於此值時提示「僅剩 N 包」。
@@ -37,6 +39,32 @@ const changeQuantity = (delta) => {
     if (variant.value === null) return;
 
     quantity.value = Math.min(variant.value.stock, Math.max(1, quantity.value + delta));
+};
+
+// 加入購物車：送出中停用按鈕；成功後顯示加入的內容與前往購物車的連結，失敗時顯示原因（例如超過庫存）。
+const adding = ref(false);
+const added = ref(null);
+const error = ref(null);
+
+const addToCart = async () => {
+    if (variant.value === null || grind.value === null || adding.value) return;
+
+    adding.value = true;
+    error.value = null;
+    added.value = null;
+
+    try {
+        await cartRequest('POST', props.urls.cartItems, {
+            variant_id: variant.value.id,
+            grind: grind.value.value,
+            quantity: quantity.value,
+        });
+        added.value = `${variant.value.label}・${grind.value.label} × ${quantity.value}`;
+    } catch (failure) {
+        error.value = failure.message;
+    } finally {
+        adding.value = false;
+    }
 };
 
 const summary = computed(() => {
@@ -127,16 +155,22 @@ const summary = computed(() => {
                     @click="changeQuantity(1)"
                 >+</button>
             </div>
-            <div class="flex flex-[1_1_200px] flex-col gap-1 max-sm:hidden">
-                <button
-                    type="button"
-                    disabled
-                    aria-describedby="add-to-cart-note"
-                    class="min-h-14 cursor-not-allowed bg-ink text-[15px] tracking-[0.16em] text-paper opacity-60"
-                >加入購物車</button>
-            </div>
+            <button
+                type="button"
+                :disabled="variant === null || adding"
+                class="min-h-14 flex-[1_1_200px] cursor-pointer bg-ink text-[15px] tracking-[0.16em] text-paper disabled:cursor-not-allowed disabled:opacity-60 max-sm:hidden"
+                @click="addToCart"
+            >{{ adding ? '加入中…' : '加入購物車' }}</button>
         </div>
-        <p id="add-to-cart-note" class="-mt-4 text-xs text-muted max-sm:hidden">購物車即將開放。</p>
+
+        <!-- 桌機版的加入結果；手機版改在底部固定列上方提示 -->
+        <div aria-live="polite" class="-mt-3 empty:hidden max-sm:hidden">
+            <div v-if="added" class="flex flex-wrap items-center justify-between gap-3 bg-sand px-5 py-2.5 text-sm">
+                <span>已加入購物車：{{ added }}</span>
+                <a :href="urls.cart" class="inline-flex min-h-11 items-center tracking-[0.1em] text-ink">前往購物車</a>
+            </div>
+            <p v-else-if="error" class="text-[13px] text-accent">{{ error }}</p>
+        </div>
     </section>
 
     <!-- 手機版底部固定列：任何捲動位置都看得到價格與已選內容 -->
@@ -147,10 +181,17 @@ const summary = computed(() => {
         </div>
         <button
             type="button"
-            disabled
-            aria-describedby="add-to-cart-note-phone"
-            class="min-h-13 flex-[0_0_172px] cursor-not-allowed bg-ink text-[15px] tracking-[0.12em] text-paper opacity-60"
-        >加入購物車</button>
-        <span id="add-to-cart-note-phone" class="sr-only">購物車即將開放。</span>
+            :disabled="variant === null || adding"
+            class="min-h-13 flex-[0_0_172px] cursor-pointer bg-ink text-[15px] tracking-[0.12em] text-paper disabled:cursor-not-allowed disabled:opacity-60"
+            @click="addToCart"
+        >{{ adding ? '加入中…' : '加入購物車' }}</button>
+
+        <div aria-live="polite" class="absolute inset-x-3 bottom-full mb-3 empty:hidden">
+            <div v-if="added" class="flex items-center justify-between gap-2 bg-ink py-1.5 pr-2 pl-4 text-[13px] text-paper">
+                <span>已加入購物車</span>
+                <a :href="urls.cart" class="inline-flex min-h-11 items-center px-2 tracking-[0.08em] text-paper">查看</a>
+            </div>
+            <p v-else-if="error" class="bg-ink px-4 py-2.5 text-[13px] text-paper">{{ error }}</p>
+        </div>
     </div>
 </template>
