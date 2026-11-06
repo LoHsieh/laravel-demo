@@ -10,8 +10,12 @@
                 <span class="text-[13px] text-muted">共 <span data-cart-count>{{ $cart['count'] }}</span> 件</span>
             @endif
         </div>
-        <p class="mb-12 text-[13px] text-subtle max-sm:hidden">你目前以訪客身分瀏覽。登入後，購物車內容會自動併入你的會員購物車。</p>
-        <p class="text-xs text-subtle sm:hidden">以訪客身分瀏覽中，登入後購物車會自動合併。</p>
+        @guest('customer')
+            <p class="mb-12 text-[13px] text-subtle max-sm:hidden">你目前以訪客身分瀏覽。<a href="{{ route('login') }}" class="text-ink underline underline-offset-4">登入</a>後，購物車內容會自動併入你的會員購物車。</p>
+            <p class="text-xs text-subtle sm:hidden">以訪客身分瀏覽中，<a href="{{ route('login') }}" class="text-ink underline underline-offset-4">登入</a>後購物車會自動合併。</p>
+        @else
+            <div class="mb-12 max-sm:mb-0"></div>
+        @endguest
 
         @if ($cart['items'] === [])
             <div class="flex flex-col items-center gap-5 border-y border-line px-6 py-24 text-center max-sm:mt-8 max-sm:gap-3.5 max-sm:px-4 max-sm:py-16">
