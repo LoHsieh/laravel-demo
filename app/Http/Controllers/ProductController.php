@@ -78,6 +78,10 @@ class ProductController extends Controller
                     fn (Grind $grind) => ['value' => $grind->value, 'label' => $grind->label(), 'hint' => $grind->hint()],
                     Grind::cases(),
                 ),
+                'urls' => [
+                    'cartItems' => route('cart.items.store'),
+                    'cart' => route('cart.show'),
+                ],
             ],
         ]);
     }

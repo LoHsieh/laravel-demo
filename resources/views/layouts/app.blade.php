@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', '焙日 Bairi')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,13 +17,21 @@
                 <span class="font-serif text-[26px] font-semibold tracking-[0.14em]">焙日</span>
                 <span class="font-latin text-[15px] tracking-[0.32em]">BAIRI</span>
             </a>
-            <nav aria-label="主選單" class="flex flex-wrap gap-x-9 text-sm tracking-[0.1em]">
+            <nav aria-label="主選單" class="flex flex-wrap gap-x-9 text-sm tracking-[0.1em] max-sm:order-3 max-sm:w-full">
                 <a href="{{ route('products.index') }}"
                    @if (request()->routeIs('products.index')) aria-current="page" @endif
                    class="inline-flex min-h-11 items-center text-ink no-underline aria-[current=page]:underline aria-[current=page]:underline-offset-8">咖啡豆</a>
                 <a href="{{ route('home') }}#flavors" class="inline-flex min-h-11 items-center text-ink no-underline">依風味找</a>
                 <a href="{{ route('home') }}#about" class="inline-flex min-h-11 items-center text-ink no-underline">關於焙日</a>
             </nav>
+            {{-- 手機版與 Logo 同一列靠右；數量在加入或修改購物車後由 app.js 更新 --}}
+            <a href="{{ route('cart.show') }}" data-cart-link
+               aria-label="購物車，{{ $cartCount }} 件商品"
+               @if (request()->routeIs('cart.show')) aria-current="page" @endif
+               class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-2 text-ink no-underline max-sm:order-2 max-sm:-mr-2">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
+                <span data-cart-count class="font-latin text-base">{{ $cartCount }}</span>
+            </a>
         </div>
     </header>
 

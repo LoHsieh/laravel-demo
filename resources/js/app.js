@@ -1,13 +1,24 @@
 import { createApp } from 'vue';
+import CartPage from './components/CartPage.vue';
 import ProductBrowser from './components/ProductBrowser.vue';
 import ProductPurchase from './components/ProductPurchase.vue';
 
-const components = { ProductBrowser, ProductPurchase };
+const components = { CartPage, ProductBrowser, ProductPurchase };
 
 document.querySelectorAll('[data-vue-component]').forEach((element) => {
     const { vueComponent, props } = element.dataset;
 
     createApp(components[vueComponent], JSON.parse(props)).mount(element);
+});
+
+// 頁首的購物車數量，在加入、修改或移除購物車項目後更新（cart.js）。
+window.addEventListener('cart:updated', ({ detail }) => {
+    document.querySelectorAll('[data-cart-count]').forEach((element) => {
+        element.textContent = detail.count;
+    });
+    document.querySelectorAll('[data-cart-link]').forEach((link) => {
+        link.setAttribute('aria-label', `購物車，${detail.count} 件商品`);
+    });
 });
 
 // 首頁「本週烘焙」橫向卡片列的左右箭頭，每次捲動一張卡片。
