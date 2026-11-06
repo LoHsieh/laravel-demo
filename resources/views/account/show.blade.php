@@ -17,7 +17,7 @@
         </div>
 
         <section aria-labelledby="recipient-heading" class="max-w-[560px] border border-line bg-raised px-10 py-10 max-sm:border-x-0 max-sm:bg-transparent max-sm:px-0 max-sm:py-8">
-            <h2 id="recipient-heading" class="font-serif text-[22px] font-medium tracking-[0.1em]">
+            <h2 id="recipient-heading" class="font-serif text-[26px] font-medium tracking-[0.1em]">
                 <span class="mr-2 font-latin text-accent">01</span>預設收件資訊
             </h2>
             <p class="mt-1 mb-7 text-[13px] text-subtle">結帳時會自動帶入，仍可在結帳頁修改。</p>

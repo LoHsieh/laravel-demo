@@ -4,7 +4,6 @@
 return [
     'confirmed' => ':attribute與確認欄位不一致。',
     'email' => ':attribute格式不正確。',
-    'lowercase' => ':attribute必須為小寫。',
     'max' => [
         'string' => ':attribute不可超過 :max 個字元。',
     ],

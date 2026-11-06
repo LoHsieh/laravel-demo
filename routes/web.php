@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Middleware\LowercaseEmail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -20,7 +21,7 @@ Route::patch('/cart/items/{key}', [CartController::class, 'update'])->name('cart
 Route::delete('/cart/items/{key}', [CartController::class, 'destroy'])->name('cart.items.destroy');
 
 // 顧客帳號。店家後台另有自己的 guard 與登入頁。
-Route::middleware('guest:customer')->group(function () {
+Route::middleware(['guest:customer', LowercaseEmail::class])->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
 
@@ -31,7 +32,8 @@ Route::middleware('guest:customer')->group(function () {
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
         ->middleware('throttle:6,1')->name('password.email');
     Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->middleware('throttle:6,1')->name('password.update');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth:customer')->name('logout');

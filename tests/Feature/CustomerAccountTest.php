@@ -154,3 +154,19 @@ it('sends a 訪客 to the login page before showing the account page', function 
     $this->get('/account')->assertRedirect('/login');
     $this->put('/account/recipient', ['recipient_name' => '林小梅'])->assertRedirect('/login');
 });
+
+it('treats Email addresses case-insensitively when registering and logging in', function () {
+    $this->post('/register', [
+        'email' => 'Mei@Example.com',
+        'password' => 'roast-daily-2026',
+        'password_confirmation' => 'roast-daily-2026',
+    ])->assertSessionHasNoErrors();
+
+    $customer = Customer::sole();
+    expect($customer->email)->toBe('mei@example.com');
+
+    $this->post('/logout');
+    $this->post('/login', ['email' => 'MEI@example.COM', 'password' => 'roast-daily-2026']);
+
+    $this->assertAuthenticatedAs($customer, 'customer');
+});

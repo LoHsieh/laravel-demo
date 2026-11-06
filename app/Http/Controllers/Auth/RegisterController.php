@@ -21,7 +21,7 @@ class RegisterController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(Customer::class)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(Customer::class)],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
