@@ -1,5 +1,7 @@
 # 網站部署在 Render，資料庫使用 Aiven MySQL
 
+> 資料庫部分已被 [ADR 0004](0004-render-with-tidb-cloud.md) 取代：Aiven 已不再提供免費 MySQL。
+
 這是一份求職用的 demo，必須能長期免費上線。網站以 Docker 部署在 Render 的免費方案（Render 沒有原生 PHP 環境）；資料庫不用 Render 的免費 Postgres，因為它在建立 30 天後就會失效，而是使用 Aiven 的免費 MySQL，沒有時間限制，也符合原本選定的 MySQL 技術棧。
 
 ## Considered Options
