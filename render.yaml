@@ -1,5 +1,5 @@
-# Render Blueprint：正式環境部署設定（ADR 0002）。
-# 網站以 Docker 映像跑在 Render 免費方案；資料庫為 Aiven 免費 MySQL。
+# Render Blueprint：正式環境部署設定（ADR 0002、ADR 0004）。
+# 網站以 Docker 映像跑在 Render 免費方案；資料庫為 TiDB Cloud Starter（與 MySQL 相容）。
 # 標示 sync: false 的變數不寫進 repo，首次建立 Blueprint 時在 Render 後台填入。
 services:
   - type: web
@@ -36,23 +36,26 @@ services:
       - key: LOG_LEVEL
         value: info
 
-      # Aiven MySQL 連線資訊，從 Aiven 後台複製。
+      # TiDB Cloud 連線資訊，從 TiDB Cloud 後台的 Connect 對話框複製。
+      # DB_PORT 為 4000；DB_USERNAME 帶有前綴，例如 xxxxxxxx.root。
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
         sync: false
       - key: DB_PORT
-        sync: false
+        value: "4000"
       - key: DB_DATABASE
         sync: false
       - key: DB_USERNAME
         sync: false
       - key: DB_PASSWORD
         sync: false
-      # Aiven 強制 SSL。CA 憑證以 Render Secret File 上傳，檔名 aiven-ca.pem，
-      # Render 會把它掛載在 /etc/secrets/ 底下。
+      # TiDB Cloud 強制 TLS，憑證由 Let's Encrypt 簽發，使用映像內建的系統 CA。
       - key: MYSQL_ATTR_SSL_CA
-        value: /etc/secrets/aiven-ca.pem
+        value: /etc/ssl/certs/ca-certificates.crt
+      # 讓 database queue 不使用 TiDB 不支援的 SKIP LOCKED（ADR 0004）。
+      - key: DB_SERVER_VERSION
+        value: "5.7"
 
       - key: SESSION_DRIVER
         value: database

@@ -73,6 +73,15 @@ it('searches 咖啡豆 by keyword in the name or the 風味描述', function () 
         ->and(browse(['q' => ' 涅里 ']))->toBe(['肯亞 涅里 AA']);
 });
 
+it('searches 咖啡豆 by keyword regardless of letter case', function () {
+    Product::factory()->create(['name' => 'Ethiopia Guji', 'flavor_description' => 'Blueberry, Jasmine']);
+    Product::factory()->create(['name' => '肯亞 涅里 AA', 'flavor_description' => '黑醋栗・葡萄柚']);
+
+    expect(browse(['q' => 'ethiopia']))->toBe(['Ethiopia Guji'])
+        ->and(browse(['q' => 'BLUEBERRY']))->toBe(['Ethiopia Guji'])
+        ->and(browse(['q' => 'aa']))->toBe(['肯亞 涅里 AA']);
+});
+
 it('sorts 咖啡豆 newest first by default', function () {
     Product::factory()->create(['name' => '最早上架', 'created_at' => now()->subDays(2)]);
     Product::factory()->create(['name' => '最新上架', 'created_at' => now()]);

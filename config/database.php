@@ -59,6 +59,8 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // 正式環境（TiDB）設為 5.7，讓 database queue 不使用 SKIP LOCKED；也會改變 sql_mode（ADR 0004）。
+            'version' => env('DB_SERVER_VERSION'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
