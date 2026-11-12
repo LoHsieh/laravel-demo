@@ -59,16 +59,14 @@ final class ProductFacets
     }
 
     /**
-     * 依烘焙度由淺到深，不在已知烘焙度中的排在最後。
+     * 依烘焙度由淺到深。
      *
      * @return list<array{value: string, count: int}>
      */
     private static function roasts(): array
     {
-        $rank = array_flip(array_column(Roast::cases(), 'value'));
-
         return collect(self::byColumn('roast'))
-            ->sortBy(fn (array $option) => $rank[$option['value']] ?? PHP_INT_MAX)
+            ->sortBy(fn (array $option) => Roast::from($option['value'])->level())
             ->values()
             ->all();
     }

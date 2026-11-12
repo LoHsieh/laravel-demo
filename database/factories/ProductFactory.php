@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Catalog\Roast;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +20,7 @@ class ProductFactory extends Factory
             'name' => '測試咖啡豆 '.fake()->unique()->numberBetween(1, 99999),
             'origin' => fake()->randomElement(['衣索比亞', '肯亞', '哥倫比亞']),
             'process' => fake()->randomElement(['水洗', '日曬', '蜜處理']),
-            'roast' => fake()->randomElement(['淺焙', '中焙', '深焙']),
+            'roast' => fake()->randomElement(Roast::cases()),
             'flavor_description' => '茉莉・檸檬・紅茶',
         ];
     }

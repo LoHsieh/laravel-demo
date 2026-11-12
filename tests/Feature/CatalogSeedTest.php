@@ -1,5 +1,6 @@
 <?php
 
+use App\Catalog\Roast;
 use App\Models\FlavorNote;
 use App\Models\Product;
 use App\Models\Variant;
@@ -36,4 +37,11 @@ it('does not duplicate seeded data when the seeder runs again on the next deploy
         ->and(Variant::count())->toBe(20)
         ->and(FlavorNote::count())->toBe(4)
         ->and(Product::firstWhere('name', '耶加雪菲 孔加 水洗')->flavorNotes()->count())->toBe(2);
+});
+
+it('gives every seeded and factory-made 咖啡豆 a known 烘焙度', function () {
+    $this->seed(DatabaseSeeder::class);
+    Product::factory()->count(5)->create();
+
+    expect(Product::all()->pluck('roast'))->each->toBeInstanceOf(Roast::class);
 });

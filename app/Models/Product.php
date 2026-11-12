@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Catalog\ProductFilters;
 use App\Catalog\ProductSort;
+use App\Catalog\Roast;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -170,6 +171,7 @@ class Product extends Model
     protected function casts(): array
     {
         return [
+            'roast' => Roast::class,
             'is_published' => 'boolean',
             'is_featured' => 'boolean',
         ];

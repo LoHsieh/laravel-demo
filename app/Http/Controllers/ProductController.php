@@ -6,7 +6,6 @@ use App\Catalog\Grind;
 use App\Catalog\ProductFacets;
 use App\Catalog\ProductFilters;
 use App\Catalog\ProductSort;
-use App\Catalog\Roast;
 use App\Http\Resources\ProductCardResource;
 use App\Http\Resources\VariantResource;
 use App\Models\Product;
@@ -65,7 +64,6 @@ class ProductController extends Controller
 
         return response()->view('products.show', [
             'product' => $product,
-            'roast' => Roast::tryFrom($product->roast),
             'related' => Product::published()
                 ->relatedTo($product)
                 ->withCardSummary()

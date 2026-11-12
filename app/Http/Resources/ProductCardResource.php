@@ -24,7 +24,7 @@ class ProductCardResource extends JsonResource
             'origin' => $this->origin,
             'origin_latin' => $this->origin_latin,
             'process' => $this->process,
-            'roast' => $this->roast,
+            'roast' => $this->roast->value,
             'flavor_description' => $this->flavor_description,
             'min_price' => $this->variants_min_price === null ? null : (int) $this->variants_min_price,
             'sold_out' => ! $this->has_stock,
