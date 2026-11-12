@@ -24,14 +24,31 @@
                 <a href="{{ route('home') }}#flavors" class="inline-flex min-h-11 items-center text-ink no-underline">依風味找</a>
                 <a href="{{ route('home') }}#about" class="inline-flex min-h-11 items-center text-ink no-underline">關於焙日</a>
             </nav>
-            {{-- 手機版與 Logo 同一列靠右；數量在加入或修改購物車後由 app.js 更新 --}}
-            <a href="{{ route('cart.show') }}" data-cart-link
-               aria-label="購物車，{{ $cartCount }} 件商品"
-               @if (request()->routeIs('cart.show')) aria-current="page" @endif
-               class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-2 text-ink no-underline max-sm:order-2 max-sm:-mr-2">
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
-                <span data-cart-count class="font-latin text-base">{{ $cartCount }}</span>
-            </a>
+            {{-- 手機版與 Logo 同一列靠右 --}}
+            <div class="flex items-center gap-1 max-sm:order-2 max-sm:-mr-2">
+                @auth('customer')
+                    <a href="{{ route('account.show') }}" aria-label="會員中心"
+                       @if (request()->routeIs('account.*')) aria-current="page" @endif
+                       class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-2 text-sm tracking-[0.1em] text-ink no-underline">
+                        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"></path></svg>
+                        <span class="max-sm:hidden">會員</span>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" aria-label="登入或註冊"
+                       class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-2 text-sm tracking-[0.1em] text-ink no-underline">
+                        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"></path></svg>
+                        <span class="max-sm:hidden">登入</span>
+                    </a>
+                @endauth
+                {{-- 數量在加入或修改購物車後由 app.js 更新 --}}
+                <a href="{{ route('cart.show') }}" data-cart-link
+                   aria-label="購物車，{{ $cartCount }} 件商品"
+                   @if (request()->routeIs('cart.show')) aria-current="page" @endif
+                   class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-2 text-ink no-underline">
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1.2 12H6.2z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg>
+                    <span data-cart-count class="font-latin text-base">{{ $cartCount }}</span>
+                </a>
+            </div>
         </div>
     </header>
 
