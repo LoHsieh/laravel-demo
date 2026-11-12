@@ -15,7 +15,7 @@
         <h3 class="font-serif text-lg leading-normal tracking-[0.06em] max-sm:text-sm">{{ $product->name }}</h3>
         <span class="text-[13px] text-subtle max-sm:hidden">{{ $product->flavor_description }}</span>
         <div class="mt-2 flex items-center justify-between border-t border-line pt-3 text-[13px] max-sm:mt-0 max-sm:flex-col max-sm:items-start max-sm:border-0 max-sm:pt-0">
-            <span class="text-subtle max-sm:text-xs">{{ $product->roast }}・{{ $product->process }}</span>
+            <span class="text-subtle max-sm:text-xs">{{ $product->roast->value }}・{{ $product->process }}</span>
             @if ($product->variants_min_price !== null)
                 <span @class(['font-latin text-[17px] max-sm:text-base', 'text-subtle' => $soldOut])>NT${{ number_format($product->variants_min_price) }} 起</span>
             @endif

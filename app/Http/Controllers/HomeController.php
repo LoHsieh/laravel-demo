@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Catalog\ProductSort;
-use App\Catalog\Roast;
 use App\Models\Product;
 use Illuminate\View\View;
 
@@ -19,7 +18,7 @@ class HomeController extends Controller
 
         return view('home', [
             'featured' => $featured,
-            'featuredRoast' => $featured ? Roast::tryFrom($featured->roast)?->latin() : null,
+            'featuredRoast' => $featured?->roast->latin(),
             'latestProducts' => Product::published()
                 ->sortedBy(ProductSort::Newest)
                 ->withCardSummary()

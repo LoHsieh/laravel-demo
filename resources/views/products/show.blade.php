@@ -52,14 +52,12 @@
                     <div class="flex flex-col gap-1 bg-paper px-5 py-4.5 max-sm:px-3.5 max-sm:py-3">
                         <dt class="text-xs tracking-[0.12em] text-muted max-sm:text-[11px]">烘焙度</dt>
                         <dd class="flex flex-col gap-2 max-sm:gap-1">
-                            <span class="font-serif text-base max-sm:text-sm">{{ $product->roast }}</span>
-                            @if ($roast)
-                                <span role="img" aria-label="烘焙度 {{ count(App\Catalog\Roast::cases()) }} 級中的第 {{ $roast->level() }} 級" class="flex gap-1">
-                                    @foreach (App\Catalog\Roast::cases() as $step)
-                                        <span @class(['h-[3px] w-4 max-sm:w-3', 'bg-ink' => $step->level() <= $roast->level(), 'bg-outline' => $step->level() > $roast->level()])></span>
-                                    @endforeach
-                                </span>
-                            @endif
+                            <span class="font-serif text-base max-sm:text-sm">{{ $product->roast->value }}</span>
+                            <span role="img" aria-label="烘焙度 {{ count(App\Catalog\Roast::cases()) }} 級中的第 {{ $product->roast->level() }} 級" class="flex gap-1">
+                                @foreach (App\Catalog\Roast::cases() as $step)
+                                    <span @class(['h-[3px] w-4 max-sm:w-3', 'bg-ink' => $step->level() <= $product->roast->level(), 'bg-outline' => $step->level() > $product->roast->level()])></span>
+                                @endforeach
+                            </span>
                         </dd>
                     </div>
                 </dl>
