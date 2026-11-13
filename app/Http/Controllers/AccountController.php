@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RecipientRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -18,12 +19,7 @@ class AccountController extends Controller
 
     public function updateRecipient(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'recipient_name' => ['required', 'string', 'max:50'],
-            // 手機或市話，允許 +、括號、空白與連字號
-            'recipient_phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9()\s-]{8,20}$/'],
-            'recipient_address' => ['required', 'string', 'max:255'],
-        ]);
+        $validated = $request->validate(RecipientRules::rules());
 
         $request->user('customer')->update($validated);
 

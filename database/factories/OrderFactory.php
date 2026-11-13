@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Ordering\OrderStatus;
+use App\Ordering\PlaceOrder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,7 +28,7 @@ class OrderFactory extends Factory
             'subtotal' => 840,
             'shipping_fee' => 100,
             'total' => 940,
-            'payment_due_at' => now()->addMinutes(30),
+            'payment_due_at' => now()->addMinutes(PlaceOrder::PAYMENT_WINDOW_MINUTES),
         ];
     }
 }

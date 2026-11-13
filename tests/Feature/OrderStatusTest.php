@@ -5,7 +5,8 @@ use App\Ordering\InvalidOrderTransition;
 use App\Ordering\OrderStatus;
 
 /**
- * 規格「訂單狀態」中允許的轉換，其餘一律拒絕。
+ * 規格書（docs/specs/bairi-v1.md）「訂單狀態」中允許的轉換，其餘一律拒絕。
+ * 目前還沒有改變訂單狀態的 HTTP 入口（顧客取消在 #11、付款通知在 #10），先從 Order::transitionTo() 驗證。
  */
 const LEGAL_ORDER_TRANSITIONS = [
     ['pending_payment', 'paid'],       // 付款成功

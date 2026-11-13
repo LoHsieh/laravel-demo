@@ -24,20 +24,29 @@ final class PlaceOrder
 
     /**
      * @param  array{recipient_name: string, recipient_phone: string, recipient_address: string}  $recipient
+     * @param  int  $expectedTotal  顧客在結帳頁看到的總計；與實際金額不同時不成立訂單，請顧客重新確認
      *
-     * @throws ValidationException 購物車是空的，或有規格庫存不足（錯誤放在 checkout）
+     * @throws ValidationException 購物車是空的、有規格庫存不足或已下架、或金額已變動（錯誤放在 checkout）
      */
-    public function __invoke(Customer $customer, Cart $cart, array $recipient): Order
+    public function __invoke(Customer $customer, Cart $cart, array $recipient, int $expectedTotal): Order
     {
-        return DB::transaction(function () use ($customer, $cart, $recipient) {
+        return DB::transaction(function () use ($customer, $cart, $recipient, $expectedTotal) {
+            // 先鎖定顧客，同一位顧客重複送出時，後到的請求等前一筆完成後才讀購物車，讀到的已是清空後的購物車。
+            // 這必須是交易中的第一個查詢：REPEATABLE READ 的快照在第一次一般讀取時建立。
+            Customer::whereKey($customer->getKey())->lockForUpdate()->first();
+
             $items = $cart->items();
 
             if ($items->isEmpty()) {
                 throw ValidationException::withMessages(['checkout' => '購物車是空的，無法結帳。']);
             }
 
-            $variants = $this->lockVariants($items);
-            $this->ensureEnoughStock($items, $variants);
+            $quantities = $items
+                ->groupBy(fn (CartItem $item) => $item->variant->id)
+                ->map(fn (Collection $group) => $group->sum('quantity'));
+
+            $variants = $this->lockVariants($quantities->keys());
+            $this->ensureAvailable($quantities, $variants, $items);
 
             $lines = $items->map(fn (CartItem $item) => [
                 'variant_id' => $item->variant->id,
@@ -47,12 +56,16 @@ final class PlaceOrder
                 'quantity' => $item->quantity,
             ]);
 
-            foreach ($this->quantitiesByVariant($items) as $variantId => $quantity) {
-                $variants[$variantId]->decrement('stock', $quantity);
-            }
-
             $subtotal = $lines->sum(fn (array $line) => $line['unit_price'] * $line['quantity']);
             $shippingFee = ShippingFee::for($subtotal);
+
+            if ($subtotal + $shippingFee !== $expectedTotal) {
+                throw ValidationException::withMessages(['checkout' => '訂單金額已變動，請確認新的總計後再送出。']);
+            }
+
+            foreach ($quantities as $variantId => $quantity) {
+                $variants[$variantId]->decrement('stock', $quantity);
+            }
 
             $order = $customer->orders()->create([
                 ...$recipient,
@@ -73,14 +86,16 @@ final class PlaceOrder
 
     /**
      * 依 id 順序鎖定，多筆結帳同時鎖定多個規格時不會互相等待成死結。
+     * 只取仍可購買的規格，讀購物車之後才下架或刪除的規格不會出現在結果中。
      *
-     * @param  Collection<int, CartItem>  $items
+     * @param  Collection<int, int>  $variantIds
      * @return Collection<int, Variant>
      */
-    private function lockVariants(Collection $items): Collection
+    private function lockVariants(Collection $variantIds): Collection
     {
-        return Variant::with('product')
-            ->whereKey($this->quantitiesByVariant($items)->keys())
+        return Variant::purchasable()
+            ->with('product')
+            ->whereKey($variantIds)
             ->orderBy('id')
             ->lockForUpdate()
             ->get()
@@ -88,38 +103,37 @@ final class PlaceOrder
     }
 
     /**
-     * 研磨方式不影響庫存（ADR 0001），同一規格各研磨方式的數量合計。
+     * 研磨方式不影響庫存（ADR 0001），以同一規格各研磨方式的數量合計比對庫存。
      *
+     * @param  Collection<int, int>  $quantities  各規格的數量合計，以規格 id 為索引
+     * @param  Collection<int, Variant>  $variants  鎖定後讀到的規格
      * @param  Collection<int, CartItem>  $items
-     * @return Collection<int, int>
-     */
-    private function quantitiesByVariant(Collection $items): Collection
-    {
-        return $items
-            ->groupBy(fn (CartItem $item) => $item->variant->id)
-            ->map(fn (Collection $group) => $group->sum('quantity'));
-    }
-
-    /**
-     * @param  Collection<int, CartItem>  $items
-     * @param  Collection<int, Variant>  $variants
      *
      * @throws ValidationException
      */
-    private function ensureEnoughStock(Collection $items, Collection $variants): void
+    private function ensureAvailable(Collection $quantities, Collection $variants, Collection $items): void
     {
-        $shortages = $this->quantitiesByVariant($items)
-            ->filter(fn (int $quantity, int $variantId) => $variants[$variantId]->stock < $quantity)
-            ->map(function (int $quantity, int $variantId) use ($variants) {
-                $variant = $variants[$variantId];
-                $stock = $variant->stock === 0 ? '已售完' : "庫存僅剩 {$variant->stock} 包";
+        $problems = $quantities->map(function (int $quantity, int $variantId) use ($variants, $items) {
+            $variant = $variants->get($variantId);
 
-                return "{$variant->product->name} {$variant->label}：{$stock}，購物車中共有 {$quantity} 包。";
-            });
+            if ($variant === null) {
+                $item = $items->first(fn (CartItem $item) => $item->variant->id === $variantId);
 
-        if ($shortages->isNotEmpty()) {
+                return "{$item->variant->product->name} {$item->variant->label}：已下架。";
+            }
+
+            if ($variant->stock >= $quantity) {
+                return null;
+            }
+
+            $stock = $variant->stock === 0 ? '已售完' : "庫存僅剩 {$variant->stock} 包";
+
+            return "{$variant->product->name} {$variant->label}：{$stock}，購物車中共有 {$quantity} 包。";
+        })->filter();
+
+        if ($problems->isNotEmpty()) {
             throw ValidationException::withMessages([
-                'checkout' => ['庫存不足，訂單未成立。', ...$shortages->values()],
+                'checkout' => ['庫存不足，訂單未成立。', ...$problems->values()],
             ]);
         }
     }

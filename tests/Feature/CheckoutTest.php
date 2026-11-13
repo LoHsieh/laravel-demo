@@ -56,6 +56,7 @@ it('places a 待付款 訂單, reserves the stock and empties the 購物車', fu
         'recipient_name' => '王大明',
         'recipient_phone' => '02-2700-1234',
         'recipient_address' => '新北市板橋區文化路一段 1 號',
+        'expected_total' => 1640,
     ]);
 
     $order = $this->customer->orders()->sole();
@@ -81,14 +82,35 @@ it('places a 待付款 訂單, reserves the stock and empties the 購物車', fu
     $this->getJson('/cart')->assertJsonPath('count', 0);
 });
 
-function placeOrder(): TestResponse
+/**
+ * 送出結帳，expected_total 預設為結帳頁上顯示的總計（與購物車總計相同）。
+ */
+function placeOrder(?int $expectedTotal = null): TestResponse
 {
     return test()->from('/checkout')->post('/checkout', [
         'recipient_name' => '林小美',
         'recipient_phone' => '0912-345-678',
         'recipient_address' => '台北市大安區復興南路一段 100 號',
+        'expected_total' => $expectedTotal ?? test()->getJson('/cart')->json('total'),
     ]);
 }
+
+it('places no 訂單 when the total changed after the 顧客 saw the checkout page', function () {
+    $variant = beanVariant('耶加雪菲 孔加 水洗', 420, 10);
+    addToCart($variant, 2);
+    $this->get('/checkout')->assertSee('name="expected_total" value="940"', false);
+
+    $variant->update(['price' => 450]);
+
+    $this->followRedirects(placeOrder(940))
+        ->assertSeeText('訂單金額已變動，請確認新的總計後再送出。')
+        ->assertSeeText('NT$1,000');
+
+    expect($this->customer->orders()->count())->toBe(0)
+        ->and($variant->fresh()->stock)->toBe(10);
+
+    placeOrder(1000)->assertRedirect(route('checkout.placed', $this->customer->orders()->sole()));
+});
 
 it('fails the whole 訂單 without reserving any stock when one 規格 is short, and says which', function () {
     $yirgacheffe = beanVariant('耶加雪菲 孔加 水洗', 420, 10);

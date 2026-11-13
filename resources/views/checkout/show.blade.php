@@ -58,9 +58,10 @@
                     <span class="font-latin text-[32px]">NT${{ number_format($summary->total()) }}</span>
                 </div>
 
+                <input type="hidden" name="expected_total" value="{{ $summary->total() }}">
                 <button type="submit" class="mt-7 flex min-h-14 w-full cursor-pointer items-center justify-center bg-ink text-[15px] tracking-[0.16em] text-paper">確認下單</button>
                 <ul class="mt-6 flex flex-col gap-2 text-xs text-subtle">
-                    <li>送出後立即為你保留庫存，請在 30 分鐘內完成付款，逾期訂單將自動取消。</li>
+                    <li>送出後立即為你保留庫存，請在 {{ \App\Ordering\PlaceOrder::PAYMENT_WINDOW_MINUTES }} 分鐘內完成付款，逾期未付款將取消訂單。</li>
                     <li>研磨不另收費，出貨前才研磨。</li>
                 </ul>
                 <a href="{{ route('cart.show') }}" class="mt-4 inline-flex min-h-11 items-center text-sm tracking-[0.1em] text-ink">回到購物車</a>

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Cart\Cart;
+use App\Http\Requests\RecipientRules;
 use App\Models\Order;
 use App\Ordering\PlaceOrder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 
 /**
@@ -30,14 +32,18 @@ class CheckoutController extends Controller
 
     public function store(Request $request, Cart $cart, PlaceOrder $placeOrder): RedirectResponse
     {
-        $recipient = $request->validate([
-            'recipient_name' => ['required', 'string', 'max:50'],
-            // 與會員中心的預設收件資訊相同規則
-            'recipient_phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9()\s-]{8,20}$/'],
-            'recipient_address' => ['required', 'string', 'max:255'],
+        $validated = $request->validate([
+            ...RecipientRules::rules(),
+            // 顧客在結帳頁看到的總計，金額在這之後變動時請顧客重新確認
+            'expected_total' => ['required', 'integer'],
         ]);
 
-        $order = $placeOrder($request->user('customer'), $cart, $recipient);
+        $order = $placeOrder(
+            $request->user('customer'),
+            $cart,
+            Arr::only($validated, array_keys(RecipientRules::rules())),
+            (int) $validated['expected_total'],
+        );
 
         return redirect()->route('checkout.placed', $order);
     }
