@@ -42,6 +42,8 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth:cu
 Route::middleware('auth:customer')->group(function () {
     // 訪客會先被導向登入（可再轉往註冊），完成後回到結帳。
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/placed/{order}', [CheckoutController::class, 'placed'])->name('checkout.placed');
 
     Route::get('/account', [AccountController::class, 'show'])->name('account.show');
     Route::put('/account/recipient', [AccountController::class, 'updateRecipient'])->name('account.recipient.update');

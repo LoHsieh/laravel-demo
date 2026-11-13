@@ -151,6 +151,14 @@ final class Cart
     }
 
     /**
+     * 清空購物車，用在訂單成立之後。
+     */
+    public function clear(): void
+    {
+        $this->store->save([]);
+    }
+
+    /**
      * 購物車項目，依加入順序排列。規格已不存在或咖啡豆已下架的項目略過。
      *
      * @return Collection<int, CartItem>
