@@ -149,3 +149,13 @@ it('returns stock to the same 規格 for each 研磨方式 it was ordered with',
 
     expect($variant->fresh()->stock)->toBe(7);
 });
+
+it('sends a 訪客 to the login page before showing or cancelling a 訂單', function () {
+    $order = orderWithItems($this->customer);
+    auth('customer')->logout();
+
+    $this->get(route('account.orders.show', $order))->assertRedirect('/login');
+    $this->post(route('account.orders.cancel', $order))->assertRedirect('/login');
+
+    expect($order->fresh()->status)->toBe(OrderStatus::PendingPayment);
+});

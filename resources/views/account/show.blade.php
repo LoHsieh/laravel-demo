@@ -21,10 +21,6 @@
                 <span class="mr-2 font-latin text-accent">01</span>我的訂單
             </h2>
 
-            @if (session('order_status'))
-                <p role="status" class="mt-6 bg-sand px-4 py-3 text-sm text-ink">{{ session('order_status') }}</p>
-            @endif
-
             @if ($orders->isEmpty())
                 <p class="mt-6 text-sm text-subtle">還沒有訂單。<a href="{{ route('products.index') }}" class="border-b border-ink text-ink">去逛逛咖啡豆</a></p>
             @else

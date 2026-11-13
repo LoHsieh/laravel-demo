@@ -31,7 +31,7 @@
                     <dd>{{ $order->payment_due_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
                 </dl>
 
-                @if ($order->status === \App\Ordering\OrderStatus::PendingPayment)
+                @if ($order->status->canTransitionTo(\App\Ordering\OrderStatus::Cancelled))
                     <form method="POST" action="{{ route('account.orders.cancel', $order) }}" class="mt-6"
                           onsubmit="return confirm('確定要取消這筆訂單嗎？取消後庫存保留會釋出，無法復原。')">
                         @csrf
