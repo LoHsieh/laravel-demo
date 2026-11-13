@@ -49,3 +49,41 @@ document.querySelectorAll('[data-related-toggle]').forEach((button) => {
         });
     });
 });
+
+// 付款期限倒數（components/payment-deadline.blade.php）。以伺服器給的剩餘秒數倒數，
+// 到期後顯示提示，再倒數幾秒跳回購物車。
+const REDIRECT_AFTER_EXPIRY_SECONDS = 5;
+
+document.querySelectorAll('[data-payment-countdown]').forEach((element) => {
+    const deadline = performance.now() + Number(element.dataset.secondsLeft) * 1000;
+    const clock = element.querySelector('[data-countdown-clock]');
+    const remaining = element.querySelector('[data-countdown-remaining]');
+    const expired = element.querySelector('[data-payment-expired]');
+    const redirectSeconds = element.querySelector('[data-redirect-seconds]');
+
+    const tick = () => {
+        const secondsLeft = Math.max(0, Math.ceil((deadline - performance.now()) / 1000));
+        clock.textContent = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(secondsLeft % 60).padStart(2, '0')}`;
+
+        if (secondsLeft > 0) {
+            setTimeout(tick, 1000);
+            return;
+        }
+
+        remaining.hidden = true;
+        expired.hidden = false;
+        let countdown = REDIRECT_AFTER_EXPIRY_SECONDS;
+        const redirectTick = () => {
+            redirectSeconds.textContent = countdown;
+            if (countdown === 0) {
+                window.location.assign(element.dataset.expiredRedirect);
+                return;
+            }
+            countdown -= 1;
+            setTimeout(redirectTick, 1000);
+        };
+        redirectTick();
+    };
+
+    tick();
+});

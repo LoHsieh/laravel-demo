@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // 店家所在時區。資料庫與程式內部一律用 UTC，顯示給人看的時間與訂單編號的日期才換成這個時區。
+    'shop_timezone' => 'Asia/Taipei',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
