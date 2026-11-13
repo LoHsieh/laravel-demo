@@ -8,13 +8,18 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * 會員中心。目前只有預設收件資訊，訂單列表在之後的票加入。
+ * 會員中心：顧客自己的訂單列表與預設收件資訊。
  */
 class AccountController extends Controller
 {
     public function show(Request $request): View
     {
-        return view('account.show', ['customer' => $request->user('customer')]);
+        $customer = $request->user('customer');
+
+        return view('account.show', [
+            'customer' => $customer,
+            'orders' => $customer->orders()->latest()->latest('id')->get(),
+        ]);
     }
 
     public function updateRecipient(Request $request): RedirectResponse
