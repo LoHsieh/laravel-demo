@@ -36,8 +36,19 @@ COPY --from=assets /app/public/build ./public/build
 
 # dump-autoload 會觸發 post-autoload-dump，順帶完成 package:discover。
 RUN composer dump-autoload --optimize --no-dev \
-    && chown -R www-data:www-data storage bootstrap/cache \
     && chmod +x /usr/local/bin/entrypoint.sh
+
+# 容器內所有程序都以 www-data 執行，先把它們要寫入的位置交給 www-data：Laravel 的 storage、
+# bootstrap/cache，以及 nginx 的暫存、log 與 pid 目錄。nginx.conf 由 entrypoint.sh 啟動時
+# 覆寫，www-data 不能在 /etc/nginx 建檔，所以先建好空檔案再交給它。
+RUN touch /etc/nginx/nginx.conf \
+    && mkdir -p /run/nginx \
+    && chown -R www-data:www-data storage bootstrap/cache \
+        /etc/nginx/nginx.conf /var/lib/nginx /var/log/nginx /run/nginx
+
+# 整個容器以非 root 執行。所有程序是同一個使用者，supervisor 與 php-fpm 結束子程序時
+# 不需要 CAP_KILL；Render 的容器沒有這項權限，否則 queue 與排程收不到結束訊號（#32）。
+USER www-data
 
 # Render 以 PORT 環境變數告知要監聽的埠，預設 10000。
 ENV PORT=10000
