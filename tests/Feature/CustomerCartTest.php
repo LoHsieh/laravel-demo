@@ -158,6 +158,7 @@ it('tells the 顧客 when the stock of a 規格 dropped below what is in the 購
 
 it('sends a 訪客 who goes to checkout to log in, then back to checkout', function () {
     $this->post('/logout');
+    $this->postJson('/cart/items', ['variant_id' => Variant::factory()->create()->id, 'grind' => 'pour_over', 'quantity' => 1]);
     $this->get('/checkout')->assertRedirect('/login');
 
     $this->post('/login', ['email' => 'mei@example.com', 'password' => 'roast-daily-2026'])
