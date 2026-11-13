@@ -18,7 +18,11 @@
             <dd>{{ $order->payment_due_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
         </dl>
 
-        <p class="mt-6 text-sm text-subtle">庫存已為你保留到付款期限為止，逾期未付款將取消訂單並釋出庫存。線上付款即將開放。</p>
+        <p class="mt-6 text-sm text-subtle">庫存已為你保留到付款期限為止，逾期未付款將取消訂單並釋出庫存。</p>
+        @if ($order->acceptsPayment())
+            {{-- 剛下單時直接導向綠界；之後回到這頁（例如按上一頁）只顯示按鈕，不會自動再開一次付款 --}}
+            @include('payments._pay-button', ['autoSubmit' => session('start_payment', false)])
+        @endif
         <a href="{{ route('products.index') }}" class="mt-8 inline-flex min-h-11 items-center text-sm tracking-[0.1em] text-ink">繼續選購</a>
     </div>
 @endsection

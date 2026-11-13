@@ -190,3 +190,14 @@ it('shows the 訂單 number and payment deadline to the 顧客 who placed it, an
         ->get(route('checkout.placed', $order))
         ->assertNotFound();
 });
+
+it('sends the 顧客 straight on to 綠界 once the 訂單 is placed, but only the first time the page opens', function () {
+    addToCart(beanVariant('耶加雪菲 孔加 水洗', 420, 10), 1);
+
+    $this->followRedirects(placeOrder())
+        ->assertSee("document.getElementById('start-payment').submit()", false);
+
+    $this->get(route('checkout.placed', $this->customer->orders()->sole()))
+        ->assertSeeText('前往綠界付款')
+        ->assertDontSee("document.getElementById('start-payment').submit()", false);
+});
