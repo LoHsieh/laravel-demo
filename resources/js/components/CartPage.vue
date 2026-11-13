@@ -145,7 +145,7 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
                 class="mt-7 flex min-h-14 w-full items-center justify-center bg-ink text-[15px] tracking-[0.16em] text-paper no-underline max-sm:hidden"
             >前往結帳</a>
             <ul class="mt-6 flex flex-col gap-2 text-xs text-subtle max-sm:mt-5 max-sm:gap-1">
-                <li id="checkout-note">結帳時需登入會員，可使用信用卡付款。</li>
+                <li id="checkout-note">結帳功能即將開放；結帳時需登入會員，可使用信用卡付款。</li>
                 <li>訂單成立後保留庫存 30 分鐘，逾時未付款將自動取消。</li>
                 <li class="max-sm:hidden">研磨不另收費，出貨前才研磨。</li>
             </ul>

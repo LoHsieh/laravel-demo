@@ -20,6 +20,7 @@ final class Cart
 
     /**
      * 研磨方式不影響庫存（ADR 0001），所以同一規格各研磨方式的數量合計不能超過庫存。
+     * 顧客是看著目前的價格加入的，所以 seen_price 更新為目前價格，之前的價格變動提示隨之消失。
      *
      * @throws ValidationException
      */
@@ -99,7 +100,7 @@ final class Cart
             $merged = max($existing, min($wanted, $room));
 
             if ($merged < $wanted) {
-                $adjustments[] = self::describeAdjustment($variant, Grind::from($entry['grind']), $merged);
+                $adjustments[] = self::describeAdjustment($variant, Grind::from($entry['grind']), $existing, $merged);
             }
 
             if ($merged === 0) {
@@ -119,12 +120,15 @@ final class Cart
         return $adjustments;
     }
 
-    private static function describeAdjustment(Variant $variant, Grind $grind, int $merged): string
+    /**
+     * 合併後數量沒有增加（庫存已滿或顧客原本的數量就已超過庫存）時說「未併入」，否則說調整後的數量。
+     */
+    private static function describeAdjustment(Variant $variant, Grind $grind, int $existing, int $merged): string
     {
         $item = "{$variant->product->name} {$variant->label}・{$grind->label()}";
         $stock = $variant->stock === 0 ? '已售完' : "庫存僅剩 {$variant->stock} 包";
 
-        return $merged === 0
+        return $merged === $existing
             ? "{$item}：{$stock}，未併入購物車。"
             : "{$item}：{$stock}，合併後調整為 {$merged} 包。";
     }

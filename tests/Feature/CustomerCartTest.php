@@ -184,3 +184,20 @@ it('links the checkout button on the 購物車 page to checkout', function () {
 
     expect($props['urls']['checkout'])->toBe(route('checkout.show'));
 });
+
+it('adds nothing and says so when the 顧客 購物車 already holds more than the stock of the 規格', function () {
+    $variant = Variant::factory()
+        ->for(Product::factory()->create(['name' => '肯亞 AA 水洗']))
+        ->create(['weight_grams' => 250, 'stock' => 10]);
+    logIn();
+    $this->postJson('/cart/items', ['variant_id' => $variant->id, 'grind' => 'pour_over', 'quantity' => 5]);
+    $this->post('/logout');
+    $this->postJson('/cart/items', ['variant_id' => $variant->id, 'grind' => 'pour_over', 'quantity' => 1]);
+    $variant->update(['stock' => 3]);
+
+    $this->followingRedirects()
+        ->post('/login', ['email' => 'mei@example.com', 'password' => 'roast-daily-2026'])
+        ->assertSeeText('肯亞 AA 水洗 250g・手沖：庫存僅剩 3 包，未併入購物車。');
+
+    $this->getJson('/cart')->assertJsonPath('items.0.quantity', 5);
+});
