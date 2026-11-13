@@ -33,6 +33,7 @@ class CartItemResource extends JsonResource
             'quantity' => $item->quantity,
             'stock' => $item->variant->stock,
             'line_total' => $item->lineTotal(),
+            'notice' => $item->notice(),
         ];
     }
 }

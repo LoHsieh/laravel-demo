@@ -97,6 +97,7 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
                             <span class="font-latin text-[19px]">{{ formatPrice(item.line_total) }}</span>
                         </div>
                         <p v-if="errors[item.key]" class="mt-1.5 text-[11px] text-accent sm:hidden">{{ errors[item.key] }}</p>
+                        <p v-else-if="item.notice" class="mt-1.5 text-[11px] text-accent sm:hidden">{{ item.notice }}</p>
                         <p v-else-if="item.quantity >= item.stock" class="mt-1.5 text-[11px] text-accent sm:hidden">僅剩 {{ item.stock }} 包，已達購買上限。</p>
                     </div>
 
@@ -118,6 +119,7 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
                         </button>
                     </div>
                     <p v-if="errors[item.key]" class="flex-[1_1_100%] text-xs text-accent max-sm:hidden">{{ errors[item.key] }}</p>
+                    <p v-else-if="item.notice" class="flex-[1_1_100%] text-xs text-accent max-sm:hidden">{{ item.notice }}</p>
                     <p v-else-if="item.quantity >= item.stock" class="flex-[1_1_100%] text-xs text-accent max-sm:hidden">此規格目前僅剩 {{ item.stock }} 包，已達可購買上限。</p>
                 </li>
             </ul>
@@ -137,14 +139,13 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
                 <span>總計</span>
                 <span class="font-latin text-[32px]">{{ formatPrice(cart.total) }}</span>
             </div>
-            <button
-                type="button"
-                disabled
+            <a
+                :href="urls.checkout"
                 aria-describedby="checkout-note"
-                class="mt-7 min-h-14 w-full cursor-not-allowed bg-ink text-[15px] tracking-[0.16em] text-paper opacity-60 max-sm:hidden"
-            >前往結帳</button>
+                class="mt-7 flex min-h-14 w-full items-center justify-center bg-ink text-[15px] tracking-[0.16em] text-paper no-underline max-sm:hidden"
+            >前往結帳</a>
             <ul class="mt-6 flex flex-col gap-2 text-xs text-subtle max-sm:mt-5 max-sm:gap-1">
-                <li id="checkout-note">結帳功能即將開放；結帳時需登入會員，可使用信用卡付款。</li>
+                <li id="checkout-note">結帳時需登入會員，可使用信用卡付款。</li>
                 <li>訂單成立後保留庫存 30 分鐘，逾時未付款將自動取消。</li>
                 <li class="max-sm:hidden">研磨不另收費，出貨前才研磨。</li>
             </ul>
@@ -157,11 +158,10 @@ const remove = (item) => update(item, () => cartRequest('DELETE', itemUrl(item))
             <span class="text-xs text-subtle">總計（{{ freeShipping ? '免運' : '含運費' }}）</span>
             <span class="font-latin text-[26px] leading-[1.1]">{{ formatPrice(cart.total) }}</span>
         </div>
-        <button
-            type="button"
-            disabled
+        <a
+            :href="urls.checkout"
             aria-describedby="checkout-note"
-            class="min-h-13 flex-[0_0_172px] cursor-not-allowed bg-ink text-[15px] tracking-[0.12em] text-paper opacity-60"
-        >前往結帳</button>
+            class="flex min-h-13 flex-[0_0_172px] items-center justify-center bg-ink text-[15px] tracking-[0.12em] text-paper no-underline"
+        >前往結帳</a>
     </div>
 </template>

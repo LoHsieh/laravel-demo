@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\LowercaseEmail;
@@ -39,6 +40,9 @@ Route::middleware(['guest:customer', LowercaseEmail::class])->group(function () 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth:customer')->name('logout');
 
 Route::middleware('auth:customer')->group(function () {
+    // 訪客會先被導向登入（可再轉往註冊），完成後回到結帳。
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+
     Route::get('/account', [AccountController::class, 'show'])->name('account.show');
     Route::put('/account/recipient', [AccountController::class, 'updateRecipient'])->name('account.recipient.update');
 });

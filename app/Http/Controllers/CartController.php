@@ -26,10 +26,14 @@ class CartController extends Controller
             return response()->json($summary)->setVary('Accept');
         }
 
+        // 頁面已把價格變動的提示交給顧客，之後以目前價格為準。
+        $cart->acknowledgePrices();
+
         return response()->view('cart.show', [
             'cart' => $summary,
             'urls' => [
                 'cartItems' => route('cart.items.store'),
+                'checkout' => route('checkout.show'),
                 'products' => route('products.index'),
             ],
         ])->setVary('Accept');
