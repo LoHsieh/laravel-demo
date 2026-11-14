@@ -6,6 +6,9 @@ use App\Cart\Cart;
 use App\Cart\CustomerCartStore;
 use App\Cart\MergeGuestCart;
 use App\Cart\SessionCartStore;
+use App\Payment\Ecpay\CheckMacValue;
+use App\Payment\Ecpay\EcpayGateway;
+use App\Payment\PaymentGateway;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -27,6 +30,14 @@ class AppServiceProvider extends ServiceProvider
                 ? $app->make(SessionCartStore::class)
                 : new CustomerCartStore($customer));
         });
+
+        $this->app->bind(PaymentGateway::class, fn () => new EcpayGateway(
+            merchantId: config('services.ecpay.merchant_id'),
+            checkMac: new CheckMacValue(config('services.ecpay.hash_key'), config('services.ecpay.hash_iv')),
+            checkoutUrl: config('services.ecpay.checkout_url'),
+            notifyUrl: route('ecpay.notify'),
+            resultUrl: route('ecpay.return'),
+        ));
     }
 
     /**

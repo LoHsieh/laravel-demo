@@ -45,7 +45,8 @@ class CheckoutController extends Controller
             (int) $validated['expected_total'],
         );
 
-        return redirect()->route('checkout.placed', $order);
+        // 訂單成立頁會立即自動導向綠界付款頁
+        return redirect()->route('checkout.placed', $order)->with('start_payment', true);
     }
 
     /**

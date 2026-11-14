@@ -16,9 +16,34 @@
             </form>
         </div>
 
+        <section aria-labelledby="orders-heading" class="mb-16 max-sm:mb-10">
+            <h2 id="orders-heading" class="font-serif text-[26px] font-medium tracking-[0.1em]">
+                <span class="mr-2 font-latin text-accent">01</span>我的訂單
+            </h2>
+
+            @if ($orders->isEmpty())
+                <p class="mt-6 text-sm text-subtle">還沒有訂單。<a href="{{ route('products.index') }}" class="border-b border-ink text-ink">去逛逛咖啡豆</a></p>
+            @else
+                <ul class="mt-6 border-t border-line">
+                    @foreach ($orders as $order)
+                        <li class="border-b border-line">
+                            <a href="{{ route('account.orders.show', $order) }}" class="grid min-h-16 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-8 py-4 text-sm text-ink no-underline hover:bg-raised max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-1">
+                                <span>
+                                    <span class="block font-latin tracking-[0.08em]">{{ $order->number }}</span>
+                                    <span class="block text-[13px] text-subtle">{{ $order->created_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</span>
+                                </span>
+                                <span class="max-sm:order-last max-sm:col-span-2">{{ $order->status->label() }}</span>
+                                <span class="font-latin text-base">NT${{ number_format($order->total) }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </section>
+
         <section aria-labelledby="recipient-heading" class="max-w-[560px] border border-line bg-raised px-10 py-10 max-sm:border-x-0 max-sm:bg-transparent max-sm:px-0 max-sm:py-8">
             <h2 id="recipient-heading" class="font-serif text-[26px] font-medium tracking-[0.1em]">
-                <span class="mr-2 font-latin text-accent">01</span>預設收件資訊
+                <span class="mr-2 font-latin text-accent">02</span>預設收件資訊
             </h2>
             <p class="mt-1 mb-7 text-[13px] text-subtle">結帳時會自動帶入，仍可在結帳頁修改。</p>
 

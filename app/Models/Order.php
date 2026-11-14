@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Ordering\InvalidOrderTransition;
 use App\Ordering\OrderStatus;
+use Carbon\CarbonInterface;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -88,10 +89,27 @@ class Order extends Model
     }
 
     /**
+     * 訂單是否接受在 $at（預設為現在）完成的付款：待付款，且 $at 在付款期限之前。
+     * 顧客能否（重新）付款，以及付款成功能否讓訂單變成已付款，都以此判斷。
+     */
+    public function acceptsPayment(?CarbonInterface $at = null): bool
+    {
+        return $this->status === OrderStatus::PendingPayment && ($at ?? now())->lt($this->payment_due_at);
+    }
+
+    /**
      * @return HasMany<OrderItem, $this>
      */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class)->orderBy('id');
+    }
+
+    /**
+     * @return HasMany<Payment, $this>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class)->orderBy('id');
     }
 }
