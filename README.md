@@ -25,3 +25,12 @@ Feature Test 使用 MySQL 的 `bairi_testing` 資料庫，並會讀取 `npm run 
 ```sh
 docker compose run --rm app ./vendor/bin/pest
 ```
+
+端對端測試（Playwright）走完主要購物流程：瀏覽、加入購物車、登入、結帳、付款通知、訂單變成已付款。綠界由測試替身取代，不會連到綠界。
+測試會以 docker compose 的 `e2e` 服務在 <http://127.0.0.1:8001> 啟動網站（讀取 `.env.e2e`，使用每次重建的 `bairi_e2e` 資料庫），結束後停止。
+
+```sh
+npx playwright install chromium   # 第一次執行前
+npm run build
+npm run test:e2e
+```
