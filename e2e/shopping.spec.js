@@ -37,11 +37,13 @@ test('a customer buys coffee beans and the order becomes paid after the 綠界 p
     await page.getByLabel('收件人姓名').fill('王小明');
     await page.getByLabel('收件人電話').fill('0912345678');
     await page.getByLabel('收件地址').fill('台北市大安區復興南路一段 1 號');
+    // 以結帳頁顯示的總計比對送往綠界的金額，不寫死價錢：調整種子資料的售價或運費規則時測試不需要修改
+    const total = (await page.locator('span:text-is("總計") + span').textContent()).replace(/\D/g, '');
     await page.getByRole('button', { name: '確認下單' }).click();
 
     // 下單後自動前往綠界付款頁
     await expect(page).toHaveURL(ECPAY_CHECKOUT_URL);
-    expect(checkout).toMatchObject({ MerchantID: MERCHANT_ID, ChoosePayment: 'Credit', TotalAmount: '600' });
+    expect(checkout).toMatchObject({ MerchantID: MERCHANT_ID, ChoosePayment: 'Credit', TotalAmount: total });
     expect(checkout.CheckMacValue).toBe(checkMacValue(checkout));
 
     // 綠界伺服器送來付款成功通知
