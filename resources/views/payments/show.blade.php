@@ -33,10 +33,7 @@
             <dd>{{ $order->status->label() }}</dd>
             <dt class="text-subtle">總計</dt>
             <dd class="font-latin text-lg">NT${{ number_format($order->total) }}</dd>
-            @if ($order->acceptsPayment())
-                <dt class="text-subtle">付款期限</dt>
-                <dd>{{ $order->payment_due_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
-            @endif
+            <x-payment-deadline :order="$order" />
         </dl>
 
         @if ($paid)

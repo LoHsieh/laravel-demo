@@ -159,3 +159,33 @@ it('sends a 訪客 to the login page before showing or cancelling a 訂單', fun
 
     expect($order->fresh()->status)->toBe(OrderStatus::PendingPayment);
 });
+
+dataset('訂單 that are no longer 待付款', [
+    OrderStatus::Paid, OrderStatus::Shipped, OrderStatus::Completed, OrderStatus::Cancelled, OrderStatus::PaymentException,
+]);
+
+it('does not show the 付款期限 once the 訂單 is no longer 待付款', function (OrderStatus $status) {
+    $order = orderWithItems($this->customer, ['status' => $status]);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertOk()
+        ->assertDontSeeText('付款期限')
+        ->assertDontSee('data-payment-countdown', false);
+})->with('訂單 that are no longer 待付款');
+
+it('counts down to the 付款期限 and sends the 顧客 back to the 購物車 when it passes', function () {
+    $this->freezeSecond();
+    $order = orderWithItems($this->customer, ['payment_due_at' => now()->addMinutes(12)->addSeconds(5)]);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertSee('data-payment-countdown', false)
+        ->assertSee('data-seconds-left="725"', false)
+        ->assertSee('data-expired-redirect="'.route('cart.show').'"', false);
+});
+
+it('starts the countdown at zero when the 付款期限 has already passed', function () {
+    $order = orderWithItems($this->customer, ['payment_due_at' => now()->subMinute()]);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertSee('data-seconds-left="0"', false);
+});

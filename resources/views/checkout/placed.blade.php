@@ -14,8 +14,7 @@
             <dd>{{ $order->status->label() }}</dd>
             <dt class="text-subtle">總計</dt>
             <dd class="font-latin text-lg">NT${{ number_format($order->total) }}</dd>
-            <dt class="text-subtle">付款期限</dt>
-            <dd>{{ $order->payment_due_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
+            <x-payment-deadline :order="$order" />
         </dl>
 
         <p class="mt-6 text-sm text-subtle">庫存已為你保留到付款期限為止，逾期未付款將取消訂單並釋出庫存。</p>

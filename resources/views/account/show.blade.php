@@ -30,7 +30,7 @@
                             <a href="{{ route('account.orders.show', $order) }}" class="grid min-h-16 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-8 py-4 text-sm text-ink no-underline hover:bg-raised max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-1">
                                 <span>
                                     <span class="block font-latin tracking-[0.08em]">{{ $order->number }}</span>
-                                    <span class="block text-[13px] text-subtle">{{ $order->created_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</span>
+                                    <x-shop-time :at="$order->created_at" class="block text-[13px] text-subtle" />
                                 </span>
                                 <span class="max-sm:order-last max-sm:col-span-2">{{ $order->status->label() }}</span>
                                 <span class="font-latin text-base">NT${{ number_format($order->total) }}</span>

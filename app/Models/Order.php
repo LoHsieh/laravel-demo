@@ -45,12 +45,12 @@ class Order extends Model
     }
 
     /**
-     * 新的訂單編號，例如 BR261113K7Q2XM：BR + 下單日期（台北時間）+ 6 碼大寫英數。
+     * 新的訂單編號，例如 BR261113K7Q2XM：BR + 下單日期（店家時區）+ 6 碼大寫英數。
      * 長度與字元都符合綠界交易編號（MerchantTradeNo，20 碼內英數）的限制。
      */
     public static function newNumber(): string
     {
-        return 'BR'.now('Asia/Taipei')->format('ymd').Str::upper(Str::random(6));
+        return 'BR'.now(config('app.shop_timezone'))->format('ymd').Str::upper(Str::random(6));
     }
 
     /**

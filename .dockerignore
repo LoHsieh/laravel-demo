@@ -18,3 +18,7 @@ docs
 *.log
 compose.yaml
 render.yaml
+e2e
+playwright.config.js
+playwright-report
+test-results

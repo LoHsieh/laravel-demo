@@ -19,7 +19,7 @@
             @csrf
 
             <section aria-labelledby="recipient-heading" class="min-w-0 flex-[999_1_480px]">
-                <h2 id="recipient-heading" class="font-serif text-[22px] font-medium tracking-[0.1em]">
+                <h2 id="recipient-heading" class="font-serif text-[26px] font-medium tracking-[0.1em]">
                     <span class="mr-2 font-latin text-accent">01</span>收件資訊
                 </h2>
                 <p class="mt-1 mb-7 text-[13px] text-subtle">只提供宅配。已帶入會員中心的預設收件資訊，可在這裡修改。</p>
@@ -30,7 +30,7 @@
             </section>
 
             <aside aria-labelledby="summary-heading" class="min-w-0 flex-[1_1_360px] border border-line bg-raised px-8 py-9 max-sm:mt-8 max-sm:border-x-0 max-sm:bg-transparent max-sm:px-0">
-                <h2 id="summary-heading" class="mb-6 font-serif text-[22px] font-medium tracking-[0.1em]">
+                <h2 id="summary-heading" class="mb-6 font-serif text-[26px] font-medium tracking-[0.1em]">
                     <span class="mr-2 font-latin text-accent">02</span>訂單內容
                 </h2>
 

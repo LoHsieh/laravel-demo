@@ -19,16 +19,15 @@
 
         <div class="flex flex-wrap items-start gap-14 max-sm:block">
             <section aria-labelledby="status-heading" class="min-w-0 flex-[999_1_480px]">
-                <h2 id="status-heading" class="font-serif text-[22px] font-medium tracking-[0.1em]">
+                <h2 id="status-heading" class="font-serif text-[26px] font-medium tracking-[0.1em]">
                     <span class="mr-2 font-latin text-accent">01</span>訂單狀態
                 </h2>
                 <dl class="mt-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-8 gap-y-3 border-y border-line py-6 text-sm">
                     <dt class="text-subtle">狀態</dt>
                     <dd>{{ $order->status->label() }}</dd>
                     <dt class="text-subtle">下單時間</dt>
-                    <dd>{{ $order->created_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
-                    <dt class="text-subtle">付款期限</dt>
-                    <dd>{{ $order->payment_due_at->timezone('Asia/Taipei')->format('Y/m/d H:i') }}</dd>
+                    <dd><x-shop-time :at="$order->created_at" /></dd>
+                    <x-payment-deadline :order="$order" />
                 </dl>
 
                 @if ($order->status->canTransitionTo(\App\Ordering\OrderStatus::Cancelled))
@@ -40,7 +39,7 @@
                     <p class="mt-3 text-[13px] text-subtle">庫存已為你保留到付款期限為止，逾期未付款將取消訂單並釋出庫存。</p>
                 @endif
 
-                <h2 id="recipient-heading" class="mt-12 font-serif text-[22px] font-medium tracking-[0.1em]">
+                <h2 id="recipient-heading" class="mt-12 font-serif text-[26px] font-medium tracking-[0.1em]">
                     <span class="mr-2 font-latin text-accent">02</span>收件資訊
                 </h2>
                 <dl class="mt-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-8 gap-y-3 border-y border-line py-6 text-sm">
@@ -56,7 +55,7 @@
             </section>
 
             <aside aria-labelledby="items-heading" class="min-w-0 flex-[1_1_360px] border border-line bg-raised px-8 py-9 max-sm:mt-12 max-sm:border-x-0 max-sm:bg-transparent max-sm:px-0">
-                <h2 id="items-heading" class="mb-6 font-serif text-[22px] font-medium tracking-[0.1em]">
+                <h2 id="items-heading" class="mb-6 font-serif text-[26px] font-medium tracking-[0.1em]">
                     <span class="mr-2 font-latin text-accent">03</span>訂單內容
                 </h2>
 
