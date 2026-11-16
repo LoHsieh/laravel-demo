@@ -7,6 +7,7 @@ use App\Cart\ShippingFee;
 use App\Catalog\Grind;
 use App\Http\Resources\CartItemResource;
 use App\Models\Variant;
+use App\Ordering\ExpireOverdueOrders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,8 +19,13 @@ class CartController extends Controller
      * 購物車頁，要求 JSON 時回傳購物車內容。加入、修改與移除也都回傳同樣格式的購物車，
      * 由 Vue 元件直接換上。
      */
-    public function show(Request $request, Cart $cart): Response|JsonResponse
+    public function show(Request $request, Cart $cart, ExpireOverdueOrders $expireOverdueOrders): Response|JsonResponse
     {
+        // 付款期限倒數結束後會跳回這裡；排程可能還沒處理，先把逾期訂單的訂單項目放回購物車
+        if ($customer = $request->user('customer')) {
+            $expireOverdueOrders($customer);
+        }
+
         $summary = $this->summary($cart, $request);
 
         if ($request->wantsJson()) {

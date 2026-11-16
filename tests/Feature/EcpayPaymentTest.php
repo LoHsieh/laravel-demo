@@ -203,15 +203,55 @@ it('keeps the 訂單 待付款 after a failed payment so the 顧客 can pay agai
     expect($order->fresh()->status)->toBe(OrderStatus::Paid);
 });
 
-it('does not mark the 訂單 as 已付款 when the 顧客 paid after the 付款期限', function () {
+it('turns an overdue 訂單 the scheduler has not cancelled yet into 付款異常 when the 顧客 paid after the 付款期限', function () {
     $order = pendingOrder();
+    $variant = $order->items()->first()->variant;
     $merchantTradeNo = paymentAttempt($order);
     $this->travel(31)->minutes();
 
     // 付款期限是台北時間 22:30
     notify(ecpayNotification($merchantTradeNo, ['PaymentDate' => '2026/11/13 22:31:00']))->assertContent('1|OK');
 
-    expect($order->fresh()->status)->not->toBe(OrderStatus::Paid);
+    // 先照付款逾期處理（歸還庫存保留、放回購物車），再因收到付款變成付款異常
+    expect($order->fresh()->status)->toBe(OrderStatus::PaymentException)
+        ->and($variant->fresh()->stock)->toBe($variant->stock + 2)
+        ->and($this->getJson('/cart')->json('count'))->toBe(2);
+});
+
+it('turns a 已取消 訂單 into 付款異常 when a 付款成功 notification arrives afterwards', function () {
+    $order = pendingOrder();
+    $merchantTradeNo = paymentAttempt($order);
+    $this->post(route('account.orders.cancel', $order));
+
+    notify(ecpayNotification($merchantTradeNo))->assertContent('1|OK');
+
+    expect($order->fresh()->status)->toBe(OrderStatus::PaymentException);
+});
+
+it('turns a 訂單 cancelled for 付款逾期 into 付款異常 when a 付款成功 notification arrives afterwards', function () {
+    $order = pendingOrder();
+    $merchantTradeNo = paymentAttempt($order);
+    $this->travel(31)->minutes();
+    $this->artisan('schedule:run');
+
+    notify(ecpayNotification($merchantTradeNo, ['PaymentDate' => '2026/11/13 22:31:00']))->assertContent('1|OK');
+
+    expect($order->fresh()->status)->toBe(OrderStatus::PaymentException)
+        ->and($this->getJson('/cart')->json('count'))->toBe(2);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertSeeText('付款異常')
+        ->assertDontSeeText('訂單已取消');
+});
+
+it('keeps a 已取消 訂單 已取消 when a 付款失敗 notification arrives afterwards', function () {
+    $order = pendingOrder();
+    $merchantTradeNo = paymentAttempt($order);
+    $this->post(route('account.orders.cancel', $order));
+
+    notify(ecpayNotification($merchantTradeNo, ['RtnCode' => '10100248', 'RtnMsg' => '拒絕交易']))->assertContent('1|OK');
+
+    expect($order->fresh()->status)->toBe(OrderStatus::Cancelled);
 });
 
 it('marks the 訂單 as 已付款 when the 顧客 paid in time but the notification was redelivered after the 付款期限', function () {

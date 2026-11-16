@@ -183,9 +183,10 @@ it('counts down to the 付款期限 and sends the 顧客 back to the 購物車 w
         ->assertSee('data-expired-redirect="'.route('cart.show').'"', false);
 });
 
-it('starts the countdown at zero when the 付款期限 has already passed', function () {
+it('shows no countdown once the 付款期限 has passed, because viewing the 訂單 expires it', function () {
     $order = orderWithItems($this->customer, ['payment_due_at' => now()->subMinute()]);
 
     $this->get(route('account.orders.show', $order))
-        ->assertSee('data-seconds-left="0"', false);
+        ->assertSeeText('已取消')
+        ->assertDontSee('data-payment-countdown', false);
 });

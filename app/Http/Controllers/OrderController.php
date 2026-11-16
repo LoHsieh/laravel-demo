@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Ordering\CancelOrder;
+use App\Ordering\ExpireOverdueOrders;
 use App\Ordering\InvalidOrderTransition;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,11 +15,14 @@ use Illuminate\View\View;
  */
 class OrderController extends Controller
 {
-    public function show(Request $request, Order $order): View
+    public function show(Request $request, Order $order, ExpireOverdueOrders $expireOverdueOrders): View
     {
         $this->ensureOwnedBy($request, $order);
 
-        return view('account.orders.show', ['order' => $order->load('items.variant.product')]);
+        // 排程可能還沒處理（網站休眠），已逾期的待付款訂單在這裡先取消，顧客看到的是已取消
+        $expireOverdueOrders($request->user('customer'));
+
+        return view('account.orders.show', ['order' => $order->refresh()->load('items.variant.product')]);
     }
 
     public function cancel(Request $request, Order $order, CancelOrder $cancelOrder): RedirectResponse

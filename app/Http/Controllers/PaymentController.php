@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Ordering\ExpireOverdueOrders;
 use App\Ordering\StartPayment;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -23,9 +24,12 @@ class PaymentController extends Controller
     /**
      * 付款結果頁。顯示的是付款通知記錄下來的結果；通知還沒到時請顧客稍後重新整理。
      */
-    public function show(Request $request, Order $order): View
+    public function show(Request $request, Order $order, ExpireOverdueOrders $expireOverdueOrders): View
     {
         abort_unless($order->customer()->is($request->user('customer')), 404);
+
+        $expireOverdueOrders($request->user('customer'));
+        $order->refresh();
 
         return view('payments.show', [
             'order' => $order,

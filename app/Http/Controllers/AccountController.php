@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RecipientRules;
+use App\Ordering\ExpireOverdueOrders;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,9 +13,12 @@ use Illuminate\View\View;
  */
 class AccountController extends Controller
 {
-    public function show(Request $request): View
+    public function show(Request $request, ExpireOverdueOrders $expireOverdueOrders): View
     {
         $customer = $request->user('customer');
+
+        // 排程可能還沒處理（網站休眠），列表上不顯示已逾期的待付款訂單
+        $expireOverdueOrders($customer);
 
         return view('account.show', [
             'customer' => $customer,

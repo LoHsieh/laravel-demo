@@ -202,3 +202,17 @@ it('adds nothing and says so when the 顧客 購物車 already holds more than t
 
     $this->getJson('/cart')->assertJsonPath('items.0.quantity', 5);
 });
+
+it('leaves out a 規格 that went off sale before login and tells the 顧客', function () {
+    $variant = Variant::factory()
+        ->for(Product::factory()->create(['name' => '耶加雪菲 孔加 水洗']))
+        ->create(['weight_grams' => 250, 'stock' => 5]);
+    $this->postJson('/cart/items', ['variant_id' => $variant->id, 'grind' => 'pour_over', 'quantity' => 2]);
+    $variant->product->update(['is_published' => false]);
+
+    $this->followingRedirects()
+        ->post('/login', ['email' => 'mei@example.com', 'password' => 'roast-daily-2026'])
+        ->assertSeeText('耶加雪菲 孔加 水洗 250g・手沖：已下架，未併入購物車。');
+
+    $this->getJson('/cart')->assertJsonPath('count', 0);
+});

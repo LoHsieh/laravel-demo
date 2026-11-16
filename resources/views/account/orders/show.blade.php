@@ -30,6 +30,20 @@
                     <x-payment-deadline :order="$order" />
                 </dl>
 
+                {{-- 付款逾期後才收到付款的訂單已是付款異常，不再說它已取消 --}}
+                @if ($order->status === \App\Ordering\OrderStatus::Cancelled && $order->cancelledForPaymentExpiry())
+                    <div role="status" class="mt-6 bg-sand px-5 py-4 text-sm">
+                        <p>付款逾期，訂單已取消，訂單項目已放回<a href="{{ route('cart.show') }}" class="underline underline-offset-4">購物車</a>。</p>
+                        @if ($order->cart_restore_notes !== [])
+                            <ul class="mt-1 list-disc pl-5 text-subtle">
+                                @foreach ($order->cart_restore_notes as $note)
+                                    <li>{{ $note }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                @endif
+
                 @if ($order->status->canTransitionTo(\App\Ordering\OrderStatus::Cancelled))
                     <form method="POST" action="{{ route('account.orders.cancel', $order) }}" class="mt-6"
                           onsubmit="return confirm('確定要取消這筆訂單嗎？取消後庫存保留會釋出，無法復原。')">
