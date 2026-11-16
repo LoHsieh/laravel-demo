@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\Admin;
 use App\Models\Customer;
 
 /*
-| 顧客與店家是兩張資料表、兩個 guard。前台預設使用 customer guard；
-| 店家的 admin guard 在後台的票建立。
+| 顧客與店家是兩張資料表、兩個 guard。前台預設使用 customer guard，
+| 後台（/admin）使用 admin guard。店家沒有註冊與忘記密碼的流程，所以沒有 admins 的 password broker。
 */
 return [
 
@@ -18,12 +19,22 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
     'providers' => [
         'customers' => [
             'driver' => 'eloquent',
             'model' => Customer::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => Admin::class,
         ],
     ],
 

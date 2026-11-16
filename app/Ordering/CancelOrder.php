@@ -24,12 +24,13 @@ final class CancelOrder
         DB::transaction(function () use ($order) {
             $order->transitionTo(OrderStatus::Cancelled);
 
-            // 同一規格不同研磨方式是不同的訂單項目，合計後依 id 順序歸還，與結帳鎖定規格的順序一致，避免死結
+            // 同一規格不同研磨方式是不同的訂單項目，合計後依 id 順序歸還，與結帳鎖定規格的順序一致，避免死結。
+            // 已刪除的規格也要歸還（ADR 0006），否則軟刪除的全域範圍會讓歸還靜默地不生效
             $order->items()->get()
                 ->groupBy('variant_id')
                 ->map(fn ($items) => $items->sum(fn (OrderItem $item) => $item->quantity))
                 ->sortKeys()
-                ->each(fn (int $quantity, int $variantId) => Variant::whereKey($variantId)->increment('stock', $quantity));
+                ->each(fn (int $quantity, int $variantId) => Variant::withTrashed()->whereKey($variantId)->increment('stock', $quantity));
         });
     }
 }
