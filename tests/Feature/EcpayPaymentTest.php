@@ -241,7 +241,7 @@ it('turns a 訂單 cancelled for 付款逾期 into 付款異常 when a 付款成
 
     $this->get(route('account.orders.show', $order))
         ->assertSeeText('付款異常')
-        ->assertDontSeeText('訂單已取消');
+        ->assertDontSeeText('付款逾期，訂單已取消，訂單項目已放回購物車。');
 });
 
 it('keeps a 已取消 訂單 已取消 when a 付款失敗 notification arrives afterwards', function () {
@@ -329,4 +329,60 @@ it('offers to pay right after the 訂單 is placed', function () {
         ->assertOk()
         ->assertSee('action="'.route('payments.store', $order).'"', false)
         ->assertSeeText('前往綠界付款');
+});
+
+describe('telling the 顧客 about a 付款異常', function () {
+    /**
+     * 顧客在付款期限後才於綠界付款成功，訂單因付款逾期取消後變成付款異常。
+     */
+    function paymentExceptionAfterExpiry(): Order
+    {
+        $order = pendingOrder();
+        $merchantTradeNo = paymentAttempt($order);
+        test()->travel(31)->minutes();
+        notify(ecpayNotification($merchantTradeNo, ['PaymentDate' => '2026/11/13 22:31:00']))->assertContent('1|OK');
+
+        return $order;
+    }
+
+    /**
+     * 顧客自行取消訂單後，才完成先前開始的綠界付款，訂單變成付款異常。
+     */
+    function paymentExceptionAfterCancel(): Order
+    {
+        $order = pendingOrder();
+        $merchantTradeNo = paymentAttempt($order);
+        test()->post(route('account.orders.cancel', $order));
+        notify(ecpayNotification($merchantTradeNo))->assertContent('1|OK');
+
+        return $order;
+    }
+
+    dataset('pages showing the 訂單', [
+        '訂單詳情' => 'account.orders.show',
+        '付款結果' => 'payments.show',
+    ]);
+
+    it('says the payment was received, the 訂單 will not ship and the money will be refunded', function (string $page) {
+        $order = paymentExceptionAfterCancel();
+
+        $this->get(route($page, $order))
+            ->assertOk()
+            ->assertSeeText('付款異常')
+            ->assertSeeText('我們已收到你的付款，但這筆訂單已取消，不會出貨。店家會與你聯絡，將款項退回。')
+            ->assertDontSeeText('付款成功')
+            ->assertDontSeeText('放回購物車')
+            ->assertDontSee(route('payments.store', $order), false);
+    })->with('pages showing the 訂單');
+
+    it('reminds the 顧客 that the 訂單項目 are back in the 購物車 and a new 訂單 is a separate payment after 付款逾期', function (string $page) {
+        $order = paymentExceptionAfterExpiry();
+
+        $this->get(route($page, $order))
+            ->assertOk()
+            ->assertSeeText('我們已收到你的付款，但這筆訂單已取消，不會出貨。店家會與你聯絡，將款項退回。')
+            ->assertSeeText('訂單項目已在付款逾期時放回購物車。重新下單會是一筆新的訂單，需要另外付款；這筆付款仍會退回給你。')
+            ->assertDontSeeText('付款成功')
+            ->assertDontSee(route('payments.store', $order), false);
+    })->with('pages showing the 訂單');
 });

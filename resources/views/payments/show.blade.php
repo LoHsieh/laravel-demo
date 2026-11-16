@@ -36,6 +36,8 @@
             <x-payment-deadline :order="$order" />
         </dl>
 
+        <x-payment-exception-notice :order="$order" class="mt-6" />
+
         @if ($paid)
             <p class="mt-6 text-sm text-subtle">我們已收到你的付款，將盡快為你烘焙與出貨。</p>
         @elseif ($failed)
