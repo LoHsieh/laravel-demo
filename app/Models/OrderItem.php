@@ -27,11 +27,13 @@ class OrderItem extends Model
     }
 
     /**
+     * 包含已刪除的規格：店家刪除規格後，既有訂單仍顯示它（ADR 0006）。
+     *
      * @return BelongsTo<Variant, $this>
      */
     public function variant(): BelongsTo
     {
-        return $this->belongsTo(Variant::class);
+        return $this->belongsTo(Variant::class)->withTrashed();
     }
 
     public function lineTotal(): int
