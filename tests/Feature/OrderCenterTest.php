@@ -190,3 +190,22 @@ it('shows no countdown once the 付款期限 has passed, because viewing the 訂
         ->assertSeeText('已取消')
         ->assertDontSee('data-payment-countdown', false);
 });
+
+it('lets the 顧客 start or retry paying a 待付款 訂單 from its detail page', function () {
+    $order = orderWithItems($this->customer);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertOk()
+        ->assertSee('action="'.route('payments.store', $order).'"', false)
+        ->assertSeeText('前往綠界付款')
+        // 從訂單詳情進來不自動送出，由顧客按下按鈕
+        ->assertDontSee("document.getElementById('start-payment').submit()", false);
+});
+
+it('offers no payment once the 訂單 is no longer 待付款', function (OrderStatus $status) {
+    $order = orderWithItems($this->customer, ['status' => $status]);
+
+    $this->get(route('account.orders.show', $order))
+        ->assertOk()
+        ->assertDontSee(route('payments.store', $order));
+})->with('訂單 that are no longer 待付款');

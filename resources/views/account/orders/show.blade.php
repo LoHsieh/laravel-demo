@@ -46,6 +46,11 @@
                     </div>
                 @endif
 
+                {{-- 付款失敗、或顧客離開了綠界付款頁時，從這裡重新付款 --}}
+                @if ($order->acceptsPayment())
+                    @include('payments._pay-button')
+                @endif
+
                 @if ($order->status->canTransitionTo(\App\Ordering\OrderStatus::Cancelled))
                     <form method="POST" action="{{ route('account.orders.cancel', $order) }}" class="mt-6"
                           onsubmit="return confirm('確定要取消這筆訂單嗎？取消後庫存保留會釋出，無法復原。')">
