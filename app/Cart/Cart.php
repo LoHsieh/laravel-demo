@@ -75,11 +75,12 @@ final class Cart
 
     /**
      * 併入另一個購物車（登入前的訪客購物車）的項目：相同規格與研磨方式的數量相加，其餘依序加在後面。
-     * 同一規格各研磨方式的合計不超過庫存，超過的部分調整到上限；已下架或不存在的規格略過。
-     * 原本就在這個購物車裡的數量不會被調降。訪客看到的價格跟著併入，登入後仍會提示價格變動。
+     * 同一規格各研磨方式的合計不超過庫存，超過的部分調整到上限；已下架的規格略過並說明，已不存在的規格直接略過。
+     * 原本就在這個購物車裡的數量不會被調降。併入的項目帶著它看到的價格，之後仍會提示價格變動。
+     * 訪客購物車登入合併與付款逾期放回購物車（ExpireOrder）都用這套規則。
      *
      * @param  array<string, Entry>  $incoming
-     * @return list<string> 因庫存而調整的購物車項目，可直接顯示給顧客的說明
+     * @return list<string> 因庫存調整或已下架而略過的購物車項目，可直接顯示給顧客的說明
      */
     public function merge(array $incoming): array
     {
@@ -91,6 +92,12 @@ final class Cart
             $variant = $variants->get($entry['variant_id']);
 
             if ($variant === null) {
+                $unpublished = Variant::with('product')->find($entry['variant_id']);
+
+                if ($unpublished !== null) {
+                    $adjustments[] = "{$unpublished->product->name} {$unpublished->label}・".Grind::from($entry['grind'])->label().'：已下架，未併入購物車。';
+                }
+
                 continue;
             }
 

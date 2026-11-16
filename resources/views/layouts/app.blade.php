@@ -56,7 +56,7 @@
         @if (session('cart_adjustments'))
             <div role="status" class="mx-auto mt-6 max-w-[1200px] px-[clamp(16px,4vw,48px)] max-sm:px-5">
                 <div class="bg-sand px-6 py-4 text-sm max-sm:px-4 max-sm:py-3 max-sm:text-[13px]">
-                    <p class="mb-1">已將登入前的購物車併入你的購物車，部分數量依庫存調整：</p>
+                    <p class="mb-1">已將登入前的購物車併入你的購物車，部分項目有所調整：</p>
                     <ul class="list-disc pl-5 text-subtle">
                         @foreach (session('cart_adjustments') as $adjustment)
                             <li>{{ $adjustment }}</li>

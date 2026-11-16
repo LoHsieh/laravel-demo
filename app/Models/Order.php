@@ -7,6 +7,8 @@ use App\Ordering\OrderStatus;
 use Carbon\CarbonInterface;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +38,16 @@ class Order extends Model
             'shipping_fee' => 'integer',
             'total' => 'integer',
             'payment_due_at' => 'datetime',
+            'cart_restore_notes' => 'array',
         ];
+    }
+
+    /**
+     * 訂單是否因付款逾期而取消（訂單項目已放回購物車）。顧客自行取消的訂單不是。
+     */
+    public function cancelledForPaymentExpiry(): bool
+    {
+        return $this->cart_restore_notes !== null;
     }
 
     public function getRouteKeyName(): string
@@ -95,6 +106,17 @@ class Order extends Model
     public function acceptsPayment(?CarbonInterface $at = null): bool
     {
         return $this->status === OrderStatus::PendingPayment && ($at ?? now())->lt($this->payment_due_at);
+    }
+
+    /**
+     * 已超過付款期限、但仍是待付款（排程尚未處理）的訂單。
+     *
+     * @param  Builder<Order>  $query
+     */
+    #[Scope]
+    protected function overdue(Builder $query): void
+    {
+        $query->where('status', OrderStatus::PendingPayment)->where('payment_due_at', '<=', now());
     }
 
     /**
