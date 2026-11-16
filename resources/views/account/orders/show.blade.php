@@ -30,7 +30,9 @@
                     <x-payment-deadline :order="$order" />
                 </dl>
 
-                {{-- 付款逾期後才收到付款的訂單已是付款異常，不再說它已取消 --}}
+                <x-payment-exception-notice :order="$order" class="mt-6" />
+
+                {{-- 只用於已取消的訂單；付款逾期後才收到付款的訂單已是付款異常，改由上面的元件說明 --}}
                 @if ($order->status === \App\Ordering\OrderStatus::Cancelled && $order->cancelledForPaymentExpiry())
                     <div role="status" class="mt-6 bg-sand px-5 py-4 text-sm">
                         <p>付款逾期，訂單已取消，訂單項目已放回<a href="{{ route('cart.show') }}" class="underline underline-offset-4">購物車</a>。</p>
