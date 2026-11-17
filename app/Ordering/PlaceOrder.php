@@ -7,6 +7,7 @@ use App\Cart\CartItem;
 use App\Cart\ShippingFee;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Variant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -49,9 +50,9 @@ final class PlaceOrder
             $this->ensureAvailable($quantities, $variants, $items);
 
             $lines = $items->map(fn (CartItem $item) => [
-                'variant_id' => $item->variant->id,
+                // 品名、重量與價格都以鎖定後讀到的規格為準，與扣庫存讀的是同一份資料（ADR 0007）
+                ...OrderItem::snapshotOf($variants[$item->variant->id]),
                 'grind' => $item->grind,
-                // 以鎖定後讀到的價格為準，與扣庫存讀的是同一份資料
                 'unit_price' => $variants[$item->variant->id]->price,
                 'quantity' => $item->quantity,
             ]);

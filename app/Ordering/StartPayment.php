@@ -39,8 +39,8 @@ final class StartPayment
         return $this->gateway->checkoutForm(new PaymentRequest(
             merchantTradeNo: $payment->merchant_trade_no,
             amount: $payment->amount,
-            itemNames: $order->items()->with('variant.product')->get()
-                ->map(fn (OrderItem $item) => "{$item->variant->product->name} {$item->variant->label} x {$item->quantity}")
+            itemNames: $order->items()->get()
+                ->map(fn (OrderItem $item) => "{$item->product_name} {$item->label} x {$item->quantity}")
                 ->all(),
             dueAt: $order->payment_due_at->toImmutable(),
         ));

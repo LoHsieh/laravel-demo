@@ -84,8 +84,8 @@
                     @foreach ($order->items as $item)
                         <li class="flex items-start justify-between gap-4 border-t border-line py-4">
                             <div class="flex min-w-0 flex-col gap-0.5">
-                                <span class="font-serif text-[15px] tracking-[0.06em]">{{ $item->variant->product->name }}</span>
-                                <span class="text-[13px] text-subtle">{{ $item->variant->label }}・{{ $item->grind->label() }}</span>
+                                <span class="font-serif text-[15px] tracking-[0.06em]">{{ $item->product_name }}</span>
+                                <span class="text-[13px] text-subtle">{{ $item->label }}・{{ $item->grind->label() }}</span>
                                 <span class="text-[13px] text-subtle">NT${{ number_format($item->unit_price) }} × {{ $item->quantity }}</span>
                             </div>
                             <span class="flex-none font-latin text-[17px]">NT${{ number_format($item->lineTotal()) }}</span>

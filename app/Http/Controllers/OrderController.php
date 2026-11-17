@@ -22,7 +22,7 @@ class OrderController extends Controller
         // 排程可能還沒處理（網站休眠），已逾期的待付款訂單在這裡先取消，顧客看到的是已取消
         $expireOverdueOrders($request->user('customer'));
 
-        return view('account.orders.show', ['order' => $order->refresh()->load('items.variant.product')]);
+        return view('account.orders.show', ['order' => $order->refresh()->load('items')]);
     }
 
     public function cancel(Request $request, Order $order, CancelOrder $cancelOrder): RedirectResponse

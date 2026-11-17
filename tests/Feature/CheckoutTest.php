@@ -71,10 +71,10 @@ it('places a 待付款 訂單, reserves the stock and empties the 購物車', fu
         ->shipping_fee->toBe(0)
         ->total->toBe(1640)
         ->payment_due_at->toDateTimeString()->toBe('2026-11-13 14:30:00')
-        ->and($order->items->map->only('variant_id', 'grind', 'unit_price', 'quantity')->all())->toBe([
-            ['variant_id' => $yirgacheffe->id, 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
-            ['variant_id' => $yirgacheffe->id, 'grind' => Grind::WholeBean, 'unit_price' => 420, 'quantity' => 1],
-            ['variant_id' => $huila->id, 'grind' => Grind::PourOver, 'unit_price' => 380, 'quantity' => 1],
+        ->and($order->items->map->only('variant_id', 'product_name', 'weight_grams', 'grind', 'unit_price', 'quantity')->all())->toBe([
+            ['variant_id' => $yirgacheffe->id, 'product_name' => '耶加雪菲 孔加 水洗', 'weight_grams' => 250, 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
+            ['variant_id' => $yirgacheffe->id, 'product_name' => '耶加雪菲 孔加 水洗', 'weight_grams' => 250, 'grind' => Grind::WholeBean, 'unit_price' => 420, 'quantity' => 1],
+            ['variant_id' => $huila->id, 'product_name' => '哥倫比亞 慧蘭 水洗', 'weight_grams' => 100, 'grind' => Grind::PourOver, 'unit_price' => 380, 'quantity' => 1],
         ])
         ->and($yirgacheffe->fresh()->stock)->toBe(7)
         ->and($huila->fresh()->stock)->toBe(4);
@@ -200,4 +200,26 @@ it('sends the 顧客 straight on to 綠界 once the 訂單 is placed, but only t
     $this->get(route('checkout.placed', $this->customer->orders()->sole()))
         ->assertSeeText('前往綠界付款')
         ->assertDontSee("document.getElementById('start-payment').submit()", false);
+});
+
+it('keeps showing the 咖啡豆 name and 規格 weight from when the 訂單 was placed after the 店家 renames the 咖啡豆', function () {
+    $variant = beanVariant('耶加雪菲 孔加 水洗', 420, 10);
+    addToCart($variant, 1);
+    placeOrder();
+    $older = $this->customer->orders()->sole();
+
+    $variant->product->update(['name' => '耶加雪菲 孔加 日曬']);
+    addToCart($variant, 1);
+    placeOrder();
+    $newer = $this->customer->orders()->whereKeyNot($older->id)->sole();
+
+    $this->get(route('account.orders.show', $older))
+        ->assertOk()
+        ->assertSeeText('耶加雪菲 孔加 水洗')
+        ->assertSeeText('250g・手沖')
+        ->assertDontSeeText('耶加雪菲 孔加 日曬');
+    $this->get(route('account.orders.show', $newer))
+        ->assertOk()
+        ->assertSeeText('耶加雪菲 孔加 日曬')
+        ->assertDontSeeText('耶加雪菲 孔加 水洗');
 });
