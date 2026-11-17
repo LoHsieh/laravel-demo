@@ -2,6 +2,7 @@
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Ordering\OrderStatus;
@@ -30,7 +31,7 @@ function pendingOrder(?Customer $customer = null): Order
     $order = Order::factory()->for($customer ?? test()->customer)->create([
         'subtotal' => 840, 'shipping_fee' => 100, 'total' => 940,
     ]);
-    $order->items()->create(['variant_id' => $variant->id, 'grind' => 'pour_over', 'unit_price' => 420, 'quantity' => 2]);
+    $order->items()->create([...OrderItem::snapshotOf($variant), 'grind' => 'pour_over', 'unit_price' => 420, 'quantity' => 2]);
 
     return $order;
 }
@@ -79,6 +80,15 @@ it('sends the 顧客 to the 綠界 credit card payment page with the order total
         ])
         ->and($form['fields']['MerchantTradeNo'])->toStartWith($order->number)->toHaveLength(20)
         ->and($this->checkMac->verify($form['fields']))->toBeTrue();
+});
+
+it('names the 綠界 payment items after the 咖啡豆 as it was when the 訂單 was placed', function () {
+    $order = pendingOrder();
+    $order->items()->sole()->variant->product->update(['name' => '耶加雪菲 孔加 日曬']);
+
+    $form = ecpayForm(startPayment($order)->assertOk());
+
+    expect($form['fields']['ItemName'])->toBe('耶加雪菲 孔加 水洗 250g x 2');
 });
 
 it('uses a new 綠界 MerchantTradeNo for every payment attempt', function () {

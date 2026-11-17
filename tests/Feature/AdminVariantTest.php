@@ -4,6 +4,7 @@ use App\Catalog\Grind;
 use App\Models\Admin;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Ordering\OrderStatus;
@@ -20,7 +21,7 @@ beforeEach(function () {
 function orderOf(Variant $variant, Customer $customer): Order
 {
     $order = Order::factory()->for($customer)->create(['subtotal' => 840, 'shipping_fee' => 100, 'total' => 940]);
-    $order->items()->create(['variant_id' => $variant->id, 'grind' => Grind::PourOver, 'unit_price' => 420, 'quantity' => 2]);
+    $order->items()->create([...OrderItem::snapshotOf($variant), 'grind' => Grind::PourOver, 'unit_price' => 420, 'quantity' => 2]);
 
     return $order;
 }

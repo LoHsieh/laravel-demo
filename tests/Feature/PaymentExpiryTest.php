@@ -3,6 +3,7 @@
 use App\Catalog\Grind;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Ordering\ExpireOrder;
@@ -27,8 +28,8 @@ function placedOrder(Customer $customer): Order
 {
     $order = Order::factory()->for($customer)->create(['subtotal' => 1220, 'shipping_fee' => 0, 'total' => 1220]);
     $order->items()->createMany([
-        ['variant_id' => test()->yirgacheffe->id, 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
-        ['variant_id' => test()->huila->id, 'grind' => Grind::WholeBean, 'unit_price' => 380, 'quantity' => 1],
+        [...OrderItem::snapshotOf(test()->yirgacheffe), 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
+        [...OrderItem::snapshotOf(test()->huila), 'grind' => Grind::WholeBean, 'unit_price' => 380, 'quantity' => 1],
     ]);
 
     return $order;

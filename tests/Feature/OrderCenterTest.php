@@ -3,6 +3,7 @@
 use App\Catalog\Grind;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Ordering\OrderStatus;
@@ -41,8 +42,8 @@ function orderWithItems(Customer $customer, array $attributes = []): Order
         ->create(['weight_grams' => 100, 'price' => 380, 'stock' => 5]);
 
     $order->items()->createMany([
-        ['variant_id' => $yirgacheffe->id, 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
-        ['variant_id' => $huila->id, 'grind' => Grind::WholeBean, 'unit_price' => 380, 'quantity' => 1],
+        [...OrderItem::snapshotOf($yirgacheffe), 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
+        [...OrderItem::snapshotOf($huila), 'grind' => Grind::WholeBean, 'unit_price' => 380, 'quantity' => 1],
     ]);
 
     return $order;
@@ -141,8 +142,8 @@ it('returns stock to the same 規格 for each 研磨方式 it was ordered with',
     $variant = Variant::factory()->create(['stock' => 4]);
     $order = Order::factory()->for($this->customer)->create();
     $order->items()->createMany([
-        ['variant_id' => $variant->id, 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
-        ['variant_id' => $variant->id, 'grind' => Grind::WholeBean, 'unit_price' => 420, 'quantity' => 1],
+        [...OrderItem::snapshotOf($variant), 'grind' => Grind::Espresso, 'unit_price' => 420, 'quantity' => 2],
+        [...OrderItem::snapshotOf($variant), 'grind' => Grind::WholeBean, 'unit_price' => 420, 'quantity' => 1],
     ]);
 
     $this->post(route('account.orders.cancel', $order));
