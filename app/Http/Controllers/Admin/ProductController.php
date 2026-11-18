@@ -8,9 +8,12 @@ use App\Models\FlavorNote;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
@@ -39,6 +42,10 @@ class ProductController extends Controller
     {
         $validated = $this->validated($request);
 
+        if ($request->hasFile('image')) {
+            $validated['attributes']['image'] = $this->storeImage($request->file('image'));
+        }
+
         $product = DB::transaction(function () use ($validated) {
             $product = Product::create($validated['attributes']);
             $product->flavorNotes()->sync($validated['flavor_notes']);
@@ -60,13 +67,39 @@ class ProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $validated = $this->validated($request);
+        $oldImage = $product->image;
+
+        if ($request->hasFile('image')) {
+            $validated['attributes']['image'] = $this->storeImage($request->file('image'));
+        } elseif ($request->boolean('remove_image')) {
+            $validated['attributes']['image'] = null;
+        }
 
         DB::transaction(function () use ($product, $validated) {
             $product->update($validated['attributes']);
             $product->flavorNotes()->sync($validated['flavor_notes']);
         });
 
+        // 資料庫已改用新圖後才刪除舊檔，避免儲存失敗時咖啡豆指向不存在的圖片。
+        if ($oldImage !== null && $product->image !== $oldImage) {
+            Storage::disk(Product::imageDisk())->delete($oldImage);
+        }
+
         return redirect()->route('admin.products.edit', $product)->with('status', '已儲存咖啡豆。');
+    }
+
+    /**
+     * 把上傳的圖片存到咖啡豆圖片的 disk，回傳檔案路徑。
+     */
+    private function storeImage(UploadedFile $image): string
+    {
+        $path = $image->store('products', Product::imageDisk());
+
+        if ($path === false) {
+            throw ValidationException::withMessages(['image' => '圖片上傳失敗，請稍後再試一次。']);
+        }
+
+        return $path;
     }
 
     /**
@@ -83,6 +116,9 @@ class ProductController extends Controller
             'flavor_notes' => ['array'],
             'flavor_notes.*' => ['integer', 'distinct', Rule::exists(FlavorNote::class, 'id')],
             'is_published' => ['boolean'],
+            // 公開的店家測試帳號任何人都能上傳，限制格式與大小，避免圖片服務被當成任意檔案空間（ADR 0008）。
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_image' => ['boolean'],
         ]);
 
         return [

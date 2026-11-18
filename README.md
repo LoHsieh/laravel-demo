@@ -10,6 +10,7 @@
 cp .env.example .env
 docker compose run --rm --no-deps app composer install
 docker compose run --rm --no-deps app php artisan key:generate
+docker compose run --rm --no-deps app php artisan storage:link   # 讓後台上傳的咖啡豆圖片可以從網址讀取
 npm ci
 npm run build
 docker compose run --rm app php artisan migrate --seed

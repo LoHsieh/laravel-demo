@@ -26,14 +26,18 @@
         @if ($featured)
             <div class="min-w-0 flex-[1_1_420px]">
                 <div class="relative flex aspect-[5/6] items-center justify-center bg-sand-deep">
-                    <x-coffee-bag :color="$featured->bag_color" class="w-[46%] shadow-[0_40px_70px_-36px_rgba(38,34,29,0.5)]">
-                        <span class="font-serif text-[clamp(16px,2vw,24px)] tracking-[0.24em]">焙日</span>
-                        <span class="h-px w-7 bg-ink"></span>
-                        <span class="px-1 font-latin text-[clamp(9px,1vw,12px)] tracking-[0.24em]">{{ $featured->origin_latin }}</span>
-                        @if ($featuredRoast)
-                            <span class="font-latin text-[clamp(8px,0.9vw,11px)] tracking-[0.2em] text-subtle">{{ $featuredRoast }}</span>
-                        @endif
-                    </x-coffee-bag>
+                    @if ($featured->image_url)
+                        <img src="{{ $featured->image_url }}" alt="" class="absolute inset-0 size-full object-cover">
+                    @else
+                        <x-coffee-bag :color="$featured->bag_color" class="w-[46%] shadow-[0_40px_70px_-36px_rgba(38,34,29,0.5)]">
+                            <span class="font-serif text-[clamp(16px,2vw,24px)] tracking-[0.24em]">焙日</span>
+                            <span class="h-px w-7 bg-ink"></span>
+                            <span class="px-1 font-latin text-[clamp(9px,1vw,12px)] tracking-[0.24em]">{{ $featured->origin_latin }}</span>
+                            @if ($featuredRoast)
+                                <span class="font-latin text-[clamp(8px,0.9vw,11px)] tracking-[0.2em] text-subtle">{{ $featuredRoast }}</span>
+                            @endif
+                        </x-coffee-bag>
+                    @endif
                     <p aria-hidden="true" class="absolute top-9 right-8 font-serif text-sm tracking-[0.5em] text-subtle [writing-mode:vertical-rl]">本週精選</p>
                     <p class="absolute bottom-7 left-8 right-8 font-serif text-sm tracking-[0.12em] text-subtle">
                         <span class="sr-only">本週精選：</span>{{ $featured->name }}

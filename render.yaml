@@ -63,3 +63,22 @@ services:
         value: database
       - key: QUEUE_CONNECTION
         value: database
+
+      # 咖啡豆圖片存放在 Cloudflare R2（S3 相容），容器重啟後依然存在（ADR 0008）。
+      # 從 R2 後台建立 bucket 並開啟公開網址（r2.dev 或自訂網域），再建立僅限該 bucket 的
+      # Object Read & Write API Token。AWS_ENDPOINT 為 https://<ACCOUNT_ID>.r2.cloudflarestorage.com，
+      # AWS_URL 為 bucket 的公開網址。
+      - key: PRODUCT_IMAGES_DISK
+        value: s3
+      - key: AWS_DEFAULT_REGION
+        value: auto
+      - key: AWS_BUCKET
+        sync: false
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

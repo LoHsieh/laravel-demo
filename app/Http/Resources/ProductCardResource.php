@@ -28,6 +28,7 @@ class ProductCardResource extends JsonResource
             'flavor_description' => $this->flavor_description,
             'min_price' => $this->variants_min_price === null ? null : (int) $this->variants_min_price,
             'sold_out' => ! $this->has_stock,
+            'image_url' => $this->image_url,
             'bag_color' => $this->bag_color,
             'url' => route('products.show', $this->resource),
         ];

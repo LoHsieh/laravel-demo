@@ -7,7 +7,7 @@
     <h1 class="mb-8 font-serif text-[30px] font-medium tracking-[0.1em]">{{ $product->exists ? $product->name : '新增咖啡豆' }}</h1>
 
     <form method="POST" action="{{ $product->exists ? route('admin.products.update', $product) : route('admin.products.store') }}" novalidate
-          class="max-w-[720px]">
+          enctype="multipart/form-data" class="max-w-[720px]">
         @csrf
         @if ($product->exists)
             @method('PUT')
@@ -73,6 +73,27 @@
             @error('flavor_description')
                 <p id="flavor_description-error" class="mt-1.5 text-[13px] text-accent">{{ $message }}</p>
             @enderror
+        </div>
+
+        <div class="mb-5">
+            <label for="image" class="mb-1.5 block text-[13px] tracking-[0.08em] text-subtle">圖片</label>
+            @if ($product->image_url)
+                <img src="{{ $product->image_url }}" alt="目前的圖片" class="mb-3 aspect-[4/5] w-40 bg-sand object-cover">
+            @endif
+            <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp"
+                   aria-describedby="image-hint @error('image') image-error @enderror"
+                   @error('image') aria-invalid="true" @enderror
+                   class="block w-full text-sm text-subtle file:mr-4 file:min-h-11 file:cursor-pointer file:border file:border-ink file:bg-paper file:px-5 file:text-sm file:text-ink">
+            <p id="image-hint" class="mt-1.5 text-[13px] text-subtle">JPEG、PNG 或 WebP，2 MB 以內。{{ $product->image_url ? '選擇新圖片會取代目前的圖片。' : '沒有圖片時，前台顯示牛皮紙袋插圖。' }}</p>
+            @error('image')
+                <p id="image-error" class="mt-1.5 text-[13px] text-accent">{{ $message }}</p>
+            @enderror
+            @if ($product->image_url)
+                <label class="mt-1 inline-flex min-h-11 cursor-pointer items-center gap-2">
+                    <input type="checkbox" name="remove_image" value="1" class="size-4 accent-ink">
+                    移除圖片，改顯示牛皮紙袋插圖
+                </label>
+            @endif
         </div>
 
         <input type="hidden" name="is_published" value="0">

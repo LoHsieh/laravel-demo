@@ -13,11 +13,15 @@
         <div class="flex flex-wrap items-start gap-16 max-sm:gap-0">
             <div class="min-w-0 flex-[1_1_460px]">
                 <div class="relative flex aspect-square items-center justify-center bg-sand-deep">
-                    <x-coffee-bag :color="$product->bag_color" class="w-[44%] shadow-[0_40px_70px_-36px_rgba(38,34,29,0.5)] max-sm:w-[42%]">
-                        <span class="font-serif text-[clamp(16px,2vw,22px)] tracking-[0.24em]">焙日</span>
-                        <span class="h-px w-[26px] bg-ink"></span>
-                        <span class="font-latin text-[clamp(9px,1vw,12px)] tracking-[0.24em]">{{ $product->origin_latin }}</span>
-                    </x-coffee-bag>
+                    @if ($product->image_url)
+                        <img src="{{ $product->image_url }}" alt="" class="absolute inset-0 size-full object-cover">
+                    @else
+                        <x-coffee-bag :color="$product->bag_color" class="w-[44%] shadow-[0_40px_70px_-36px_rgba(38,34,29,0.5)] max-sm:w-[42%]">
+                            <span class="font-serif text-[clamp(16px,2vw,22px)] tracking-[0.24em]">焙日</span>
+                            <span class="h-px w-[26px] bg-ink"></span>
+                            <span class="font-latin text-[clamp(9px,1vw,12px)] tracking-[0.24em]">{{ $product->origin_latin }}</span>
+                        </x-coffee-bag>
+                    @endif
                     <p aria-hidden="true" class="absolute top-8 right-7 font-serif text-sm tracking-[0.5em] text-subtle [writing-mode:vertical-rl] max-sm:top-5 max-sm:right-4.5 max-sm:text-xs">{{ $product->origin }}</p>
                 </div>
             </div>

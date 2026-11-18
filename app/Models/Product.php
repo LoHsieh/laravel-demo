@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable(['name', 'origin', 'process', 'roast', 'flavor_description', 'image', 'is_published', 'is_featured'])]
 class Product extends Model
@@ -41,6 +42,14 @@ class Product extends Model
      * 牛皮紙袋插圖的顏色，依咖啡豆輪替（docs/design/README.md）。
      */
     private const BAG_COLORS = ['#C6B193', '#BBA27F', '#A88F6E', '#CBB89B', '#8E765B'];
+
+    /**
+     * 存放咖啡豆圖片的 disk，依環境設定（config/filesystems.php 的 product_images）。
+     */
+    public static function imageDisk(): string
+    {
+        return config('filesystems.product_images');
+    }
 
     /**
      * @return HasMany<Variant, $this>
@@ -155,6 +164,16 @@ class Product extends Model
     protected function originLatin(): Attribute
     {
         return Attribute::get(fn () => self::ORIGIN_LATIN[$this->origin] ?? $this->origin);
+    }
+
+    /**
+     * 沒有圖片時為 null，前台改顯示牛皮紙袋插圖。
+     *
+     * @return Attribute<string|null, never>
+     */
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->image === null ? null : Storage::disk(self::imageDisk())->url($this->image));
     }
 
     /**
