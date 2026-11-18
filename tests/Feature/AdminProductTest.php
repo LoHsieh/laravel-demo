@@ -168,6 +168,45 @@ it('stores 咖啡豆 images on the disk chosen by configuration', function () {
     $this->getJson('/beans')->assertJsonPath('products.0.image_url', Storage::disk('s3')->url($image));
 });
 
+it('limits how often a 店家 can save 咖啡豆 from the same IP', function () {
+    $product = Product::factory()->create();
+
+    foreach (range(1, 10) as $_) {
+        $this->put("/admin/products/{$product->id}", productForm())->assertRedirect();
+    }
+
+    $this->put("/admin/products/{$product->id}", productForm())->assertTooManyRequests();
+    $this->post('/admin/products', productForm())->assertTooManyRequests();
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+        ->put("/admin/products/{$product->id}", productForm())->assertRedirect();
+});
+
+it('stops accepting images once the daily upload limit for the whole site is reached', function () {
+    config(['filesystems.product_images_daily_uploads' => 1]);
+    Storage::fake('public');
+    $product = Product::factory()->create();
+
+    $this->put("/admin/products/{$product->id}", productForm([
+        'image' => UploadedFile::fake()->create('first.jpg', 300, 'image/jpeg'),
+    ]))->assertSessionHasNoErrors();
+    $first = $product->fresh()->image;
+
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+        ->from("/admin/products/{$product->id}/edit")
+        ->put("/admin/products/{$product->id}", productForm([
+            'name' => '新名稱',
+            'image' => UploadedFile::fake()->create('second.jpg', 300, 'image/jpeg'),
+        ]))
+        ->assertRedirect("/admin/products/{$product->id}/edit")
+        ->assertSessionHasErrors('image');
+
+    expect($product->fresh())->image->toBe($first)->name->not->toBe('新名稱');
+    expect(Storage::disk('public')->allFiles())->toBe([$first]);
+
+    $this->put("/admin/products/{$product->id}", productForm(['name' => '新名稱']))->assertSessionHasNoErrors();
+    expect($product->fresh()->name)->toBe('新名稱');
+});
+
 it('only accepts JPEG, PNG or WebP images up to 2 MB', function (UploadedFile $file) {
     Storage::fake('public');
 

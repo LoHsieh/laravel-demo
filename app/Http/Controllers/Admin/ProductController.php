@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -93,6 +94,17 @@ class ProductController extends Controller
      */
     private function storeImage(UploadedFile $image): string
     {
+        $withinDailyLimit = RateLimiter::attempt(
+            'product-image-uploads',
+            config('filesystems.product_images_daily_uploads'),
+            fn () => true,
+            decaySeconds: 60 * 60 * 24,
+        );
+
+        if (! $withinDailyLimit) {
+            throw ValidationException::withMessages(['image' => '今天的圖片上傳次數已達上限，請明天再試，或先不附圖片儲存。']);
+        }
+
         $path = $image->store('products', Product::imageDisk());
 
         if ($path === false) {

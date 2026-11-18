@@ -10,8 +10,11 @@ use App\Payment\Ecpay\CheckMacValue;
 use App\Payment\Ecpay\EcpayGateway;
 use App\Payment\PaymentGateway;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -46,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(Login::class, MergeGuestCart::class);
+
+        // 公開的店家測試帳號大家共用，以 IP 而非帳號限制新增、編輯咖啡豆（含上傳圖片）的頻率（ADR 0008）。
+        RateLimiter::for('admin-product-writes', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
 
         // 頁首的購物車數量，每一頁都需要。
         View::composer('layouts.app', fn ($view) => $view->with('cartCount', $this->app->make(Cart::class)->count()));

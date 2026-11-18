@@ -22,3 +22,4 @@ e2e
 playwright.config.js
 playwright-report
 test-results
+workers

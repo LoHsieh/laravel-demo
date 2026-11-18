@@ -27,6 +27,9 @@ return [
 
     'product_images' => env('PRODUCT_IMAGES_DISK', 'public'),
 
+    // 全站 24 小時內最多接受的咖啡豆圖片上傳數，讓 R2 的寫入次數與儲存量不會超出免費額度（ADR 0008）。
+    'product_images_daily_uploads' => (int) env('PRODUCT_IMAGES_DAILY_UPLOADS', 200),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

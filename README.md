@@ -35,3 +35,9 @@ npx playwright install chromium   # 第一次執行前
 npm run build
 npm run test:e2e
 ```
+
+線上讀取咖啡豆圖片的 Cloudflare Worker 有自己的測試與部署步驟，見 [`workers/product-images/README.md`](workers/product-images/README.md)。
+
+```sh
+cd workers/product-images && npm test
+```

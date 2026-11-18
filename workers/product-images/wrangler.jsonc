@@ -1,0 +1,15 @@
+// 讀取咖啡豆圖片的 Worker（ADR 0008）。部署方式見本目錄的 README.md。
+{
+    "name": "bairi-product-images",
+    "main": "src/index.js",
+    "compatibility_date": "2026-11-01",
+    // 網址為 https://bairi-product-images.<帳號的 workers.dev 子網域>.workers.dev，填入 Render 的 AWS_URL。
+    "workers_dev": true,
+    "preview_urls": false,
+    "r2_buckets": [
+        {
+            "binding": "BUCKET",
+            "bucket_name": "bairi-product-images"
+        }
+    ]
+}
