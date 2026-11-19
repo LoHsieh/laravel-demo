@@ -4,6 +4,8 @@ use App\Catalog\Roast;
 use App\Models\Admin;
 use App\Models\FlavorNote;
 use App\Models\Product;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->actingAs(Admin::factory()->create(), 'admin');
@@ -101,3 +103,122 @@ it('does not offer a way to delete a 咖啡豆', function () {
 
     expect($product->fresh())->not->toBeNull();
 });
+
+it('lets a 店家 upload an image for a new 咖啡豆', function () {
+    Storage::fake('public');
+
+    $this->post('/admin/products', productForm([
+        'image' => UploadedFile::fake()->create('rwanda.jpg', 300, 'image/jpeg'),
+    ]))->assertRedirect();
+
+    $product = Product::sole();
+    expect($product->image)->not->toBeNull();
+    Storage::disk('public')->assertExists($product->image);
+});
+
+it('replaces the image of a 咖啡豆 and deletes the old file', function () {
+    Storage::fake('public');
+    $old = UploadedFile::fake()->create('old.jpg', 300, 'image/jpeg')->store('products', 'public');
+    $product = Product::factory()->create(['image' => $old]);
+
+    $this->put("/admin/products/{$product->id}", productForm([
+        'image' => UploadedFile::fake()->create('new.png', 300, 'image/png'),
+    ]))->assertRedirect("/admin/products/{$product->id}/edit");
+
+    $new = $product->fresh()->image;
+    expect($new)->not->toBe($old);
+    Storage::disk('public')->assertExists($new);
+    Storage::disk('public')->assertMissing($old);
+});
+
+it('keeps the image of a 咖啡豆 when the 店家 saves without choosing a new one', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->create('bag.jpg', 300, 'image/jpeg')->store('products', 'public');
+    $product = Product::factory()->create(['image' => $image]);
+
+    $this->put("/admin/products/{$product->id}", productForm(['name' => '新名稱']));
+
+    expect($product->fresh()->image)->toBe($image);
+    Storage::disk('public')->assertExists($image);
+});
+
+it('lets a 店家 remove the image of a 咖啡豆', function () {
+    Storage::fake('public');
+    $image = UploadedFile::fake()->create('bag.jpg', 300, 'image/jpeg')->store('products', 'public');
+    $product = Product::factory()->create(['image' => $image]);
+
+    $this->put("/admin/products/{$product->id}", productForm(['remove_image' => '1']));
+
+    expect($product->fresh()->image)->toBeNull();
+    Storage::disk('public')->assertMissing($image);
+});
+
+it('stores 咖啡豆 images on the disk chosen by configuration', function () {
+    config(['filesystems.product_images' => 's3']);
+    Storage::fake('s3');
+    Storage::fake('public');
+
+    $this->post('/admin/products', productForm([
+        'image' => UploadedFile::fake()->create('rwanda.jpg', 300, 'image/jpeg'),
+    ]));
+
+    $image = Product::sole()->image;
+    Storage::disk('s3')->assertExists($image);
+    Storage::disk('public')->assertMissing($image);
+    $this->getJson('/beans')->assertJsonPath('products.0.image_url', Storage::disk('s3')->url($image));
+});
+
+it('limits how often a 店家 can save 咖啡豆 from the same IP', function () {
+    $product = Product::factory()->create();
+
+    foreach (range(1, 10) as $_) {
+        $this->put("/admin/products/{$product->id}", productForm())->assertRedirect();
+    }
+
+    $this->put("/admin/products/{$product->id}", productForm())->assertTooManyRequests();
+    $this->post('/admin/products', productForm())->assertTooManyRequests();
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+        ->put("/admin/products/{$product->id}", productForm())->assertRedirect();
+});
+
+it('stops accepting images once the daily upload limit for the whole site is reached', function () {
+    config(['filesystems.product_images_daily_uploads' => 1]);
+    Storage::fake('public');
+    $product = Product::factory()->create();
+
+    $this->put("/admin/products/{$product->id}", productForm([
+        'image' => UploadedFile::fake()->create('first.jpg', 300, 'image/jpeg'),
+    ]))->assertSessionHasNoErrors();
+    $first = $product->fresh()->image;
+
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+        ->from("/admin/products/{$product->id}/edit")
+        ->put("/admin/products/{$product->id}", productForm([
+            'name' => '新名稱',
+            'image' => UploadedFile::fake()->create('second.jpg', 300, 'image/jpeg'),
+        ]))
+        ->assertRedirect("/admin/products/{$product->id}/edit")
+        ->assertSessionHasErrors('image');
+
+    expect($product->fresh())->image->toBe($first)->name->not->toBe('新名稱');
+    expect(Storage::disk('public')->allFiles())->toBe([$first]);
+
+    $this->put("/admin/products/{$product->id}", productForm(['name' => '新名稱']))->assertSessionHasNoErrors();
+    expect($product->fresh()->name)->toBe('新名稱');
+});
+
+it('only accepts JPEG, PNG or WebP images up to 2 MB', function (UploadedFile $file) {
+    Storage::fake('public');
+
+    $this->from('/admin/products/create')
+        ->post('/admin/products', productForm(['image' => $file]))
+        ->assertRedirect('/admin/products/create')
+        ->assertSessionHasErrors('image');
+
+    expect(Product::count())->toBe(0);
+    expect(Storage::disk('public')->allFiles())->toBeEmpty();
+})->with([
+    'not an image' => fn () => UploadedFile::fake()->create('menu.pdf', 100, 'application/pdf'),
+    'an SVG' => fn () => UploadedFile::fake()->create('bag.svg', 10, 'image/svg+xml'),
+    'larger than 2 MB' => fn () => UploadedFile::fake()->create('huge.jpg', 2049, 'image/jpeg'),
+]);

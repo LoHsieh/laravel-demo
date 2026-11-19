@@ -63,3 +63,23 @@ services:
         value: database
       - key: QUEUE_CONNECTION
         value: database
+
+      # 咖啡豆圖片存放在 Cloudflare R2（S3 相容），容器重啟後依然存在（ADR 0008）。
+      # 上傳以 S3 API 直接寫入 R2；前台讀取經過 workers/product-images 的 Worker，AWS_URL 填 Worker 的網址。
+      # 設定步驟見 workers/product-images/README.md。
+      - key: PRODUCT_IMAGES_DISK
+        value: s3
+      - key: PRODUCT_IMAGES_DAILY_UPLOADS
+        value: "200"
+      - key: AWS_DEFAULT_REGION
+        value: auto
+      - key: AWS_BUCKET
+        sync: false
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

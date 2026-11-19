@@ -10,7 +10,16 @@ defineProps({
 <template>
     <a :href="product.url" class="flex flex-col gap-5 text-ink no-underline max-sm:gap-2.5">
         <div class="relative flex aspect-[4/5] items-center justify-center bg-sand">
+            <img
+                v-if="product.image_url"
+                :src="product.image_url"
+                alt=""
+                loading="lazy"
+                class="absolute inset-0 size-full object-cover"
+                :class="{ 'opacity-55': product.sold_out }"
+            >
             <div
+                v-else
                 aria-hidden="true"
                 class="relative aspect-[3/4] w-1/2 rounded-[2px] shadow-[0_24px_40px_-24px_rgba(38,34,29,0.45)]"
                 :class="{ 'opacity-55': product.sold_out }"

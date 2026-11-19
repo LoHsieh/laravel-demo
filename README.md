@@ -10,6 +10,7 @@
 cp .env.example .env
 docker compose run --rm --no-deps app composer install
 docker compose run --rm --no-deps app php artisan key:generate
+docker compose run --rm --no-deps app php artisan storage:link   # 讓後台上傳的咖啡豆圖片可以從網址讀取
 npm ci
 npm run build
 docker compose run --rm app php artisan migrate --seed
@@ -33,4 +34,10 @@ docker compose run --rm app ./vendor/bin/pest
 npx playwright install chromium   # 第一次執行前
 npm run build
 npm run test:e2e
+```
+
+線上讀取咖啡豆圖片的 Cloudflare Worker 有自己的測試與部署步驟，見 [`workers/product-images/README.md`](workers/product-images/README.md)。
+
+```sh
+cd workers/product-images && npm test
 ```

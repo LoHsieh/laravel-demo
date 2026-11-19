@@ -5,7 +5,11 @@
 
 <a href="{{ route('products.show', $product) }}" {{ $attributes->class('flex flex-col gap-5 text-ink no-underline max-sm:gap-2.5') }}>
     <div class="relative flex aspect-[4/5] items-center justify-center bg-sand">
-        <x-coffee-bag :color="$product->bag_color" @class(['w-1/2', 'opacity-55' => $soldOut]) />
+        @if ($product->image_url)
+            <img src="{{ $product->image_url }}" alt="" loading="lazy" @class(['absolute inset-0 size-full object-cover', 'opacity-55' => $soldOut])>
+        @else
+            <x-coffee-bag :color="$product->bag_color" @class(['w-1/2', 'opacity-55' => $soldOut]) />
+        @endif
         @if ($soldOut)
             <span class="absolute top-3.5 left-3.5 border border-ink bg-paper px-3 text-xs tracking-[0.14em] max-sm:top-2 max-sm:left-2 max-sm:px-2 max-sm:text-[11px]">已售完</span>
         @endif

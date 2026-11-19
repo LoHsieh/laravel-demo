@@ -53,6 +53,21 @@ jobs:
         env:
           DB_HOST: 127.0.0.1
 
+  # 讀取咖啡豆圖片的 Cloudflare Worker（ADR 0008），以 Node 內建的 test runner 執行，不需安裝套件。
+  worker-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run Worker tests
+        run: npm test
+        working-directory: workers/product-images
+
   # 主要購物流程的端對端測試（Playwright）。網站以 .env.e2e 啟動，綠界由測試替身取代。
   e2e-tests:
     runs-on: ubuntu-latest
