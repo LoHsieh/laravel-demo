@@ -47,7 +47,7 @@ it('shows this month\'s 營收 and 訂單數 next to today\'s', function () {
 });
 
 it('counts 今日 by the 店家 timezone, not UTC', function () {
-    // 台北 00:30 是 UTC 前一天 16:30；台北前一天 23:30 是 UTC 當天之前
+    // 台北今天 00:30 在 UTC 仍是昨天（11/18 16:30）；台北昨天 23:30 在 UTC 是 11/18 15:30
     orderPlacedAt('2026-11-19 00:30', OrderStatus::Paid, 500);
     orderPlacedAt('2026-11-18 23:30', OrderStatus::Paid, 7000);
 
@@ -67,7 +67,7 @@ it('leaves 待付款, 已取消 and 付款異常 訂單 out of the 營收 and �
         ->assertSeeTextInOrder(['今日', '營收', 'NT$940', '訂單數', '1 筆']);
 });
 
-function sell(Order $order, Variant $variant, int $quantity): void
+function sellBags(Order $order, Variant $variant, int $quantity): void
 {
     $order->items()->create([...OrderItem::snapshotOf($variant), 'grind' => Grind::WholeBean, 'unit_price' => 420, 'quantity' => $quantity]);
 }
@@ -78,17 +78,35 @@ it('ranks this month\'s 熱銷咖啡豆 by how many bags were sold across their 
     $guji = Product::factory()->create(['name' => '古吉 罕貝拉 日曬']);
 
     $order = orderPlacedAt('2026-11-19 09:00', OrderStatus::Paid, 940);
-    sell($order, Variant::factory()->for($huila)->create(['weight_grams' => 250]), 2);
-    sell($order, Variant::factory()->for($yirgacheffe)->create(['weight_grams' => 100]), 1);
-    sell(orderPlacedAt('2026-11-02 09:00', OrderStatus::Completed, 940), Variant::factory()->for($huila)->create(['weight_grams' => 500]), 1);
-    sell(orderPlacedAt('2026-11-03 09:00', OrderStatus::Shipped, 940), $yirgacheffe->variants()->first(), 1);
+    sellBags($order, Variant::factory()->for($huila)->create(['weight_grams' => 250]), 2);
+    sellBags($order, Variant::factory()->for($yirgacheffe)->create(['weight_grams' => 100]), 1);
+    sellBags(orderPlacedAt('2026-11-02 09:00', OrderStatus::Completed, 940), Variant::factory()->for($huila)->create(['weight_grams' => 500]), 1);
+    sellBags(orderPlacedAt('2026-11-03 09:00', OrderStatus::Shipped, 940), $yirgacheffe->variants()->first(), 1);
 
     // 不計入營收的訂單與上個月的訂單都不算
-    sell(orderPlacedAt('2026-11-04 09:00', OrderStatus::Cancelled, 940), Variant::factory()->for($guji)->create(), 9);
-    sell(orderPlacedAt('2026-10-31 09:00', OrderStatus::Completed, 940), $guji->variants()->first(), 9);
+    $gujiVariant = Variant::factory()->for($guji)->create();
+    foreach ([OrderStatus::PendingPayment, OrderStatus::Cancelled, OrderStatus::PaymentException] as $status) {
+        sellBags(orderPlacedAt('2026-11-04 09:00', $status, 940), $gujiVariant, 9);
+    }
+    sellBags(orderPlacedAt('2026-10-31 09:00', OrderStatus::Completed, 940), $guji->variants()->first(), 9);
 
     $this->get('/admin')
         ->assertOk()
         ->assertSeeTextInOrder(['熱銷咖啡豆', '哥倫比亞 薇拉 蜜處理', '3 包', '耶加雪菲 孔加 水洗', '2 包'])
         ->assertDontSeeText('古吉 罕貝拉 日曬');
+});
+
+it('still counts bags sold from a 規格 the 店家 has since deleted', function () {
+    $variant = Variant::factory()->for(Product::factory()->create(['name' => '耶加雪菲 孔加 水洗']))->create();
+    sellBags(orderPlacedAt('2026-11-19 09:00', OrderStatus::Paid, 940), $variant, 4);
+    $variant->delete();
+
+    $this->get('/admin')->assertOk()->assertSeeTextInOrder(['熱銷咖啡豆', '耶加雪菲 孔加 水洗', '4 包']);
+});
+
+it('says so when no 咖啡豆 has sold this month', function () {
+    $this->get('/admin')
+        ->assertOk()
+        ->assertSeeTextInOrder(['今日', 'NT$0', '0 筆', '本月', 'NT$0', '0 筆'])
+        ->assertSeeText('本月還沒有售出的咖啡豆。');
 });

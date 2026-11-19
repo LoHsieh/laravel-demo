@@ -46,11 +46,11 @@ class DashboardController extends Controller
 
     /**
      * @param  Builder<Order>  $orders
-     * @return array{revenue: int, orders: int}
+     * @return array{revenue: int, orderCount: int}
      */
     private function sales(Builder $orders): array
     {
-        return ['revenue' => (int) $orders->clone()->sum('total'), 'orders' => $orders->clone()->count()];
+        return ['revenue' => (int) $orders->clone()->sum('total'), 'orderCount' => $orders->clone()->count()];
     }
 
     /**

@@ -5,7 +5,6 @@
 @section('content')
     <h1 class="mb-8 font-serif text-[30px] font-medium tracking-[0.1em]">銷售概況</h1>
 
-    {{-- 只計入已付款、已出貨、已完成的訂單；待付款、已取消、付款異常不算營收 --}}
     <div class="grid gap-6 sm:grid-cols-2">
         @foreach ($periods as $label => $sales)
             <section aria-labelledby="period-{{ $loop->index }}" class="border border-line px-6 py-5">
@@ -17,7 +16,7 @@
                     </div>
                     <div>
                         <dt class="text-[13px] tracking-[0.08em] text-subtle">訂單數</dt>
-                        <dd class="text-[26px]"><span class="font-latin">{{ $sales['orders'] }}</span> 筆</dd>
+                        <dd class="text-[26px]"><span class="font-latin">{{ $sales['orderCount'] }}</span> 筆</dd>
                     </div>
                 </dl>
             </section>
