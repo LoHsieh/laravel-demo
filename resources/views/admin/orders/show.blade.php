@@ -9,7 +9,7 @@
     </h1>
 
     @if ($order->status === \App\Ordering\OrderStatus::PaymentException)
-        <p role="alert" class="mb-8 border-l-4 border-accent bg-sand px-5 py-4 text-sm">
+        <p role="alert" class="mb-8 bg-sand px-5 py-4 text-sm">
             這筆訂單取消後才收到付款成功，庫存已經歸還，請聯絡顧客（{{ $order->customer->email }}）處理退款。
         </p>
     @endif
@@ -24,7 +24,12 @@
                 <dd><x-shop-time :at="$order->created_at" /></dd>
                 @if ($order->shipped_at)
                     <dt class="text-subtle">出貨時間</dt>
-                    <dd><x-shop-time :at="$order->shipped_at" />（出貨滿 {{ \App\Models\Order::AUTO_COMPLETE_AFTER_DAYS }} 天自動完成）</dd>
+                    <dd>
+                        <x-shop-time :at="$order->shipped_at" />
+                        @if ($order->status === \App\Ordering\OrderStatus::Shipped)
+                            （出貨滿 {{ \App\Models\Order::AUTO_COMPLETE_AFTER_DAYS }} 天自動完成）
+                        @endif
+                    </dd>
                 @endif
                 <dt class="text-subtle">顧客</dt>
                 <dd>{{ $order->customer->email }}</dd>

@@ -81,6 +81,20 @@ it('rejects moving a 訂單 to a 狀態 that is not its legal next one', functio
     '待付款 → 已付款' => [OrderStatus::PendingPayment, 'paid'],
 ]);
 
+it('keeps 顧客 and 訪客 out of the 後台 訂單', function () {
+    $order = Order::factory()->create(['status' => OrderStatus::Paid]);
+    auth('admin')->logout();
+
+    $this->get('/admin/orders')->assertRedirect('/admin/login');
+    $this->patch("/admin/orders/{$order->number}/status", ['status' => 'shipped'])->assertRedirect('/admin/login');
+
+    $this->actingAs($order->customer, 'customer');
+    $this->get("/admin/orders/{$order->number}")->assertRedirect('/admin/login');
+    $this->patch("/admin/orders/{$order->number}/status", ['status' => 'shipped'])->assertRedirect('/admin/login');
+
+    expect($order->fresh()->status)->toBe(OrderStatus::Paid);
+});
+
 it('calls out 付款異常 訂單 on the list so the 店家 can contact the 顧客', function () {
     $exception = Order::factory()->create(['status' => OrderStatus::PaymentException]);
     Order::factory()->create(['status' => OrderStatus::Paid]);

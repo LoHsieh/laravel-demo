@@ -7,10 +7,10 @@
 
     {{-- 付款異常需要店家人工聯絡顧客退款，不論目前篩選哪個狀態都提示 --}}
     @if ($paymentExceptionCount > 0)
-        <p role="alert" class="mb-8 border-l-4 border-accent bg-sand px-5 py-4 text-sm">
+        <p role="alert" class="mb-8 bg-sand px-5 py-4 text-sm">
             有 {{ $paymentExceptionCount }} 筆付款異常的訂單需要聯絡顧客處理。
             @if ($status !== \App\Ordering\OrderStatus::PaymentException)
-                <a href="{{ route('admin.orders.index', ['status' => 'payment_exception']) }}" class="ml-2 text-ink underline underline-offset-4">查看付款異常訂單</a>
+                <a href="{{ route('admin.orders.index', ['status' => \App\Ordering\OrderStatus::PaymentException->value]) }}" class="ml-2 text-ink underline underline-offset-4">查看付款異常訂單</a>
             @endif
         </p>
     @endif
