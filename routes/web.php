@@ -79,6 +79,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/variants/{variant}', [Admin\VariantController::class, 'update'])->name('variants.update');
         Route::delete('/variants/{variant}', [Admin\VariantController::class, 'destroy'])->name('variants.destroy');
 
+        Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{order}/status', [Admin\OrderController::class, 'updateStatus'])->name('orders.status.update');
+
         Route::resource('flavor-notes', Admin\FlavorNoteController::class)
             ->only(['index', 'store', 'update', 'destroy'])
             ->parameters(['flavor-notes' => 'flavorNote']);

@@ -27,6 +27,9 @@
                     <a href="{{ route('admin.flavor-notes.index') }}"
                        @if (request()->routeIs('admin.flavor-notes.*')) aria-current="page" @endif
                        class="inline-flex min-h-11 items-center text-ink no-underline aria-[current=page]:underline aria-[current=page]:underline-offset-8">風味標籤</a>
+                    <a href="{{ route('admin.orders.index') }}"
+                       @if (request()->routeIs('admin.orders.*')) aria-current="page" @endif
+                       class="inline-flex min-h-11 items-center text-ink no-underline aria-[current=page]:underline aria-[current=page]:underline-offset-8">訂單</a>
                     <a href="{{ route('home') }}" class="inline-flex min-h-11 items-center text-subtle no-underline">前台</a>
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
