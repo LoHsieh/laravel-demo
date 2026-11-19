@@ -15,12 +15,15 @@
 <body class="min-h-screen bg-paper font-sans text-[15px] leading-[1.8] text-ink">
     <header class="border-b border-line">
         <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-10 gap-y-2 px-[clamp(16px,4vw,48px)] py-4">
-            <a href="{{ route('admin.products.index') }}" class="inline-flex min-h-11 items-baseline gap-3 text-ink no-underline">
+            <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-11 items-baseline gap-3 text-ink no-underline">
                 <span class="font-serif text-[22px] font-semibold tracking-[0.14em]">焙日</span>
                 <span class="font-latin text-[13px] tracking-[0.32em] text-accent">ADMIN</span>
             </a>
             @auth('admin')
                 <nav aria-label="後台選單" class="flex flex-wrap items-center gap-x-8 text-sm tracking-[0.1em]">
+                    <a href="{{ route('admin.dashboard') }}"
+                       @if (request()->routeIs('admin.dashboard')) aria-current="page" @endif
+                       class="inline-flex min-h-11 items-center text-ink no-underline aria-[current=page]:underline aria-[current=page]:underline-offset-8">概況</a>
                     <a href="{{ route('admin.products.index') }}"
                        @if (request()->routeIs('admin.products.*')) aria-current="page" @endif
                        class="inline-flex min-h-11 items-center text-ink no-underline aria-[current=page]:underline aria-[current=page]:underline-offset-8">咖啡豆</a>

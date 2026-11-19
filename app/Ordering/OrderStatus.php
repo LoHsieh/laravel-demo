@@ -29,6 +29,15 @@ enum OrderStatus: string
         }, true);
     }
 
+    /**
+     * 訂單是否計入營收：顧客確實付了款、店家也要出貨的訂單。
+     * 付款異常雖然收到了款項，但店家要退款而不出貨，所以不計入。
+     */
+    public function countsAsRevenue(): bool
+    {
+        return in_array($this, [self::Paid, self::Shipped, self::Completed], true);
+    }
+
     public function label(): string
     {
         return match ($this) {

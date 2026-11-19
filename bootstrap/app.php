@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 後台與前台各自有登入頁：未登入的店家導向後台登入頁，已登入的店家不再看到後台登入頁。
         $inAdmin = fn (Request $request) => $request->is('admin', 'admin/*');
         $middleware->redirectGuestsTo(fn (Request $request) => $inAdmin($request) ? route('admin.login') : route('login'));
-        $middleware->redirectUsersTo(fn (Request $request) => $inAdmin($request) ? route('admin.products.index') : route('home'));
+        $middleware->redirectUsersTo(fn (Request $request) => $inAdmin($request) ? route('admin.dashboard') : route('home'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

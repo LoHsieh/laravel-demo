@@ -7,9 +7,9 @@ it('lets a 店家 sign in on the 後台 login page and reach the 後台', functi
     Admin::factory()->create(['email' => 'admin@bairi.test']);
 
     $this->post('/admin/login', ['email' => 'admin@bairi.test', 'password' => 'password'])
-        ->assertRedirect('/admin/products');
+        ->assertRedirect('/admin');
 
-    $this->get('/admin/products')->assertOk();
+    $this->get('/admin')->assertOk()->assertSeeText('銷售概況');
 });
 
 it('rejects a wrong password on the 後台 login page', function () {
