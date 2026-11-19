@@ -27,6 +27,9 @@ class Order extends Model
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
+    /** 已出貨的訂單在出貨滿這麼多天後自動改為已完成。 */
+    public const AUTO_COMPLETE_AFTER_DAYS = 7;
+
     /**
      * @return array<string, string>
      */
@@ -38,6 +41,7 @@ class Order extends Model
             'shipping_fee' => 'integer',
             'total' => 'integer',
             'payment_due_at' => 'datetime',
+            'shipped_at' => 'datetime',
             'cart_restore_notes' => 'array',
         ];
     }
@@ -68,7 +72,7 @@ class Order extends Model
      * 改變訂單狀態。不合法的轉換一律拒絕。
      *
      * 以「狀態仍是讀取時的狀態」為條件更新，兩個請求同時改同一筆訂單時（例如顧客取消與付款通知），
-     * 只有先寫入的成功，後到的會因狀態已改變而被拒絕。
+     * 只有先寫入的成功，後到的會因狀態已改變而被拒絕。改為已出貨時一併記下出貨時間。
      *
      * @throws InvalidOrderTransition
      */
@@ -80,15 +84,18 @@ class Order extends Model
             throw InvalidOrderTransition::for($this, $from, $to);
         }
 
+        $now = $this->freshTimestamp();
+        $changes = ['status' => $to, ...($to === OrderStatus::Shipped ? ['shipped_at' => $now] : [])];
+
         $updated = static::whereKey($this->getKey())
             ->where('status', $from)
-            ->update(['status' => $to, 'updated_at' => $this->freshTimestamp()]);
+            ->update([...$changes, 'updated_at' => $now]);
 
         if ($updated === 0) {
             throw InvalidOrderTransition::for($this, $from, $to);
         }
 
-        $this->forceFill(['status' => $to])->syncOriginalAttribute('status');
+        $this->forceFill($changes)->syncOriginalAttributes(array_keys($changes));
     }
 
     /**
@@ -117,6 +124,18 @@ class Order extends Model
     protected function overdue(Builder $query): void
     {
         $query->where('status', OrderStatus::PendingPayment)->where('payment_due_at', '<=', now());
+    }
+
+    /**
+     * 出貨已滿 7 天、但仍是已出貨（排程尚未處理）的訂單。
+     *
+     * @param  Builder<Order>  $query
+     */
+    #[Scope]
+    protected function dueForCompletion(Builder $query): void
+    {
+        $query->where('status', OrderStatus::Shipped)
+            ->where('shipped_at', '<=', now()->subDays(self::AUTO_COMPLETE_AFTER_DAYS));
     }
 
     /**
