@@ -22,7 +22,7 @@ it('seeds a public 店家 account that can sign in on the 後台 but not the 前
         ->assertSessionHasErrors('email');
 
     $this->post('/admin/login', ['email' => 'admin@example.com', 'password' => 'password'])
-        ->assertRedirect('/admin/products');
+        ->assertRedirect('/admin');
     $this->assertAuthenticated('admin');
 });
 
@@ -35,5 +35,5 @@ it('keeps one of each demo account, with the public password, when seeded again 
     expect(Customer::where('email', 'customer@example.com')->count())->toBe(1)
         ->and(Admin::where('email', 'admin@example.com')->count())->toBe(1);
     $this->post('/admin/login', ['email' => 'admin@example.com', 'password' => 'password'])
-        ->assertRedirect('/admin/products');
+        ->assertRedirect('/admin');
 });

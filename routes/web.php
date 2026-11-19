@@ -72,7 +72,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::post('/logout', [Admin\LoginController::class, 'destroy'])->name('logout');
 
-        Route::redirect('/', '/admin/products');
+        Route::get('/', Admin\DashboardController::class)->name('dashboard');
         Route::resource('products', Admin\ProductController::class)->except(['show', 'destroy'])
             ->middlewareFor(['store', 'update'], 'throttle:admin-product-writes');
         Route::post('/products/{product}/variants', [Admin\VariantController::class, 'store'])->name('products.variants.store');

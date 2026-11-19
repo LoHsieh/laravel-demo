@@ -127,6 +127,17 @@ class Order extends Model
     }
 
     /**
+     * 計入營收的訂單（已付款、已出貨、已完成）。
+     *
+     * @param  Builder<Order>  $query
+     */
+    #[Scope]
+    protected function countedAsRevenue(Builder $query): void
+    {
+        $query->whereIn('status', array_filter(OrderStatus::cases(), fn (OrderStatus $status) => $status->countsAsRevenue()));
+    }
+
+    /**
      * 出貨已滿 7 天、但仍是已出貨（排程尚未處理）的訂單。
      *
      * @param  Builder<Order>  $query
